@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+    <title>Home - Maruu de' Shop</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <title>Maruu de' Shop</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -14,24 +14,84 @@
         <div class="nav-container">
             <a href="index.html" class="logo">Maruu de' Shop</a>
             <div class="nav-link">
-                <a href="index.html">Home</a>
+                <a href="index.html" style="color: var(--primary-color);">Home</a>
                 <a href="shop.html" class="btn-primary">Browse Products</a>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-     <header id="home" class="hero">
-        <h1>Welcome to <span>Maruu de' Shop</span></h1>
-        <p>We sell the best phone cases in PMU! Protect your device with style, durability, and a premium feel.</p>
-        <a href="shop.html" class="cta-button">Shop Now</a>
+    <!-- Main Content (Hero Section) -->
+    <header id="home" class="hero">
+        <div class="hero-content">
+            <h1>Welcome to <span>Maruu de' Shop</span></h1>
+            <p>We sell the best phone cases in PMU! Protect your device with style, durability, and a premium feel.</p>
+            <a href="shop.html" class="cta-button">Shop Now</a>
+        </div>
     </header>
 
-</body>
+    <!-- Featured Products Section -->
+    <main id="shop" class="shop-section">
+        <h2 class="section-title">Featured Products</h2>
 
-        <!-- Footer -->
-     <footer>
+        <div class="product-grid">
+            <!-- Item 1 -->
+            <div class="product-card">
+                <img src="https://placehold.co/400x400/e2e8f0/475569?text=Clear+Case" alt="Clear Phone Case" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Clear Bumper Case</h3>
+                    <p class="product-description">Minimalist protection.</p>
+                    <div class="product-footer">
+                        <span class="product-price">RM15.00</span>
+                        <a href="shop.html" class="add-to-cart" style="text-decoration:none; text-align:center;">View</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="product-card">
+                <img src="https://placehold.co/400x400/e2e8f0/475569?text=Silicone+Case" alt="Silicone Phone Case" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Matte Silicone</h3>
+                    <p class="product-description">Soft touch, great grip.</p>
+                    <div class="product-footer">
+                        <span class="product-price">RM12.00</span>
+                        <a href="shop.html" class="add-to-cart" style="text-decoration:none; text-align:center;">View</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="product-card">
+                <img src="https://placehold.co/400x400/e2e8f0/475569?text=Armor+Case" alt="Armor Phone Case" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Tough Armor</h3>
+                    <p class="product-description">Heavy duty drops.</p>
+                    <div class="product-footer">
+                        <span class="product-price">RM25.00</span>
+                        <a href="shop.html" class="add-to-cart" style="text-decoration:none; text-align:center;">View</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="product-card">
+                <img src="https://placehold.co/400x400/e2e8f0/475569?text=Wallet+Case" alt="Wallet Phone Case" class="product-image">
+                <div class="product-info">
+                    <h3 class="product-title">Leather Folio</h3>
+                    <p class="product-description">Holds your cards.</p>
+                    <div class="product-footer">
+                        <span class="product-price">RM35.00</span>
+                        <a href="shop.html" class="add-to-cart" style="text-decoration:none; text-align:center;">View</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
         &copy; 2026 Maruu de' Shop. Serving PMU locally.
-     </footer>
+    </footer>
 
+</body>
 </html>
