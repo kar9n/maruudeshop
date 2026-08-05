@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <title>Products - Maruu de' Shop</title>
+</head>
+<body>
+
+    <!-- Navigation Menu -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Maruu de' Shop</a>
+            <div class="nav-link">
+                <a href="index.html">Home</a>
+                <a href="shop.html" class="btn-primary">Browse Products</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Products (Shop Page Section) -->
+    <main id="shop" class="shop-section">
+        <h2 class="section-title">Our Products</h2>
+
+        <!-- Tab Buttons with Sliding Indicator -->
+        <div class="tab-container" id="tab-container">
+            <button class="tab-button active" onclick="openModel(event, 'iPhone17')">iPhone 17 Series</button>
+            <button class="tab-button" onclick="openModel(event, 'iPhone16')">iPhone 16 Series</button>
+            <button class="tab-button" onclick="openModel(event, 'iPhone15')">iPhone 15 Series</button>
+            <button class="tab-button" onclick="openModel(event, 'iPhone14')">iPhone 14 Series</button>
+            <button class="tab-button" onclick="openModel(event, 'iPhone13')">iPhone 13 Series</button>
+            <button class="tab-button" onclick="openModel(event, 'OlderModels')">Older Models</button>
+            <!-- This div is the animated sliding line -->
+            <div class="tab-indicator" id="tab-indicator"></div>
+        </div>
+
+        <!-- Tab Content: iPhone 17 -->
+        <div id="iPhone17" class="tab-content" style="display: block;">
+            <h3 class="model-subtitle">iPhone 17 / 17 Pro / 17 Pro Max / 17 Air</h3>
+            <div class="product-grid">
+                <!--Item 1 -->
+                <div class="product-card">
+                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=17+Pro+Clear" alt="iPhone 17 Pro Clear Case" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">17 Pro Clear Bumper</h3>
+                        <p class="product-description">Minimalist Protection.</p>
+                        <div class="product-footer">
+                            <span class="product-price">RM15.00</span>
+                            <button class="add-to-cart">Add</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Item 2 -->
+                <div class="product-card">
+                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=17+Air+Silicone" alt="iPhone 17 Air Silicone Case" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">17 Air Matte Silicone</h3>
+                        <p class="product-description">Soft touch, great grip.</p>
+                        <div class="product-footer">
+                            <span class="product-price">RM12.00</span>
+                            <button class="add-to-cart">Add</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--Item 3 -->
+                <div class="product-card">
+                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=17+ProMax+Armor" alt="iPhone 17 Pro Max Armor Case" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">17 Pro Max Tough Armor</h3>
+                        <p class="product-description">Heavy Duty Protection.</p>
+                        <div class="product-footer">
+                            <span class="product-price">RM25.00</span>
+                            <button class="add-to-cart">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: iPhone 16 -->
+        <div id="iPhone16" class="tab-content">
+            <h3 class="model-subtitle">iPhone 16 / 16 Plus / 16 Pro / 16 Pro Max</h3>
+            <div class="product-grid">
+                <!--Item 1 -->
+                <div class="product-card">
+                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=16+Clear" alt="iPhone 16 Clear Case" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">16 Standard Clear Case</h3>
+                        <p class="product-description">Show off your color.</p>
+                        <div class="product-footer">
+                            <span class="product-price">RM10.00</span>
+                            <button class="add-to-cart">Add</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Item 2 -->
+                <div class="product-card">
+                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=16+Pro+Leather" alt="iPhone 16 Pro Leather Case" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">16 Pro Leather Folio</h3>
+                        <p class="product-description">Premium feel, card slots.</p>
+                        <div class="product-footer">
+                            <span class="product-price">RM35.00</span>
+                            <button class="add-to-cart">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: iPhone 15 -->
+        <div id="iPhone15" class="tab-content">
+            <h3 class="model-subtitle">iPhone 15 / 15 Plus / 15 Pro / 15 Pro Max</h3>
+            <div class="product-grid">
+                <!--Item 1 -->
+                <div class="product-card">
+                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=15+Pro+Silicone" alt="iPhone 15 Pro Silicone" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">15 Pro Silicone Case</h3>
+                        <p class="product-description">Classic protection.</p>
+                        <div class="product-footer">
+                            <span class="product-price">RM8.00</span>
+                            <button class="add-to-cart">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: iPhone 14 -->
+        <div id="iPhone14" class="tab-content">
+            <h3 class="model-subtitle">iPhone 14 / 14 Plus / 14 Pro / 14 Pro Max</h3>
+            <div class="product-grid">
+                <!--Item 1 -->
+                <div class="product-card">
+                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=14+Clear" alt="iPhone 14 Clear Case" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">14 Standard Clear Case</h3>
+                        <p class="product-description">Simple and clean.</p>
+                        <div class="product-footer">
+                            <span class="product-price">RM8.00</span>
+                            <button class="add-to-cart">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: iPhone 13 -->
+        <div id="iPhone13" class="tab-content">
+            <h3 class="model-subtitle">iPhone 13 / 13 mini / 13 Pro / 13 Pro Max</h3>
+            <div class="product-grid">
+                <!--Item 1 -->
+                <div class="product-card">
+                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=13+ProMax+Leather" alt="iPhone 13 Pro Max Leather" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">13 Pro Max Leather Folio</h3>
+                        <p class="product-description">Elegant styling.</p>
+                        <div class="product-footer">
+                            <span class="product-price">RM12.00</span>
+                            <button class="add-to-cart">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab Content: Older Models -->
+        <div id="OlderModels" class="tab-content">
+            <h3 class="model-subtitle">iPhone 12 / 11 / X / 8 / 7 / 6</h3>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">Please contact us directly for availability on older models.</p>
+            <div class="product-grid">
+                <!--Item 1 -->
+                <div class="product-card">
+                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=Universal+Pouch" alt="Universal Pouch" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">Universal Soft Pouch</h3>
+                        <p class="product-description">Fits most older models.</p>
+                        <div class="product-footer">
+                            <span class="product-price">RM5.00</span>
+                            <button class="add-to-cart">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2026 Maruu de' Shop. Serving PMU locally.
+    </footer>
+
+    <!-- JavaScript for Tab Switching and Animated Underline -->
+    <script>
+        // Setup the initial position of the sliding line when the page loads
+        document.addEventListener("DOMContentLoaded", function() {
+            const activeTab = document.querySelector('.tab-button.active');
+            updateIndicator(activeTab);
+        });
+
+        // Function to move the line under the active button
+        function updateIndicator(element) {
+            const indicator = document.getElementById('tab-indicator');
+            // Move the indicator to the exact left position of the button
+            indicator.style.left = element.offsetLeft + "px";
+            // Make the indicator the exact width of the button
+            indicator.style.width = element.offsetWidth + "px";
+        }
+
+        // Your original openModel function, slightly updated
+        function openModel(evt, modelName) {
+            // Get all elements with class="tab-content" and hide them
+            var tabcontent = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tab-button" and remove the class "active"
+            var tabbuttons = document.getElementsByClassName("tab-button");
+            for (var i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button
+            document.getElementById(modelName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</body>
+</html>
