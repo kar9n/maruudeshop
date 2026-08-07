@@ -44,16 +44,25 @@
                 
                 <!-- Left Side: Form -->
                 <div style="flex: 1; min-width: 300px; max-width: 600px;">
-                    <h3 class="model-subtitle" style="text-align: left; margin-bottom: 1rem;">Add New Product</h3>
+                    <h3 class="model-subtitle" style="text-align: left; margin-bottom: 1rem;" id="form-title">Add New Product</h3>
                     <form id="add-product-form" style="display: flex; flex-direction: column; gap: 1rem;">
-                        <input type="text" id="p-id" placeholder="Product ID (e.g. 17-pro-clear)" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
+                        <input type="text" id="p-id" placeholder="Product ID (e.g. 17-pro-clear)" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background-color: var(--white);">
                         <input type="text" id="p-name" placeholder="Product Name" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
                         <input type="text" id="p-desc" placeholder="Description" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
                         <input type="number" id="p-price" placeholder="Price (RM)" step="0.01" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
                         <input type="number" id="p-stock" placeholder="Stock Count" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
                         <input type="text" id="p-image" placeholder="Image URL" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
                         <input type="text" id="p-category" placeholder="Category ID (e.g. iPhone17)" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
-                        <button type="submit" class="btn-full" style="max-width: 200px;">Save Product</button>
+                        
+                        <label style="font-size: 0.95rem; font-weight: 600; color: var(--text-dark); display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" id="p-featured" style="width: 18px; height: 18px;"> 
+                            Show in Featured Products (Homepage)
+                        </label>
+
+                        <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                            <button type="submit" id="submit-btn" class="btn-full" style="max-width: 200px;">Save Product</button>
+                            <button type="button" id="cancel-edit-btn" onclick="cancelEdit()" class="btn-full" style="max-width: 200px; background-color: #6b7280; display: none;">Cancel Edit</button>
+                        </div>
                     </form>
                 </div>
 
@@ -102,7 +111,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        // Added updateDoc for the toggle feature
+        import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDQ7T8Lz1CtbJOgGp-DX5HtmQY814lWQ6U",
@@ -118,6 +128,9 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         const allowedEmail = "georgeschan93@gmail.com";
+
+        // Store loaded products globally so we can access them for the edit function
+        window.adminProductsData = {};
 
         const loginBtn = document.getElementById('google-login-btn');
         const loginSection = document.getElementById('login-section');
@@ -161,44 +174,115 @@
             const stock = parseInt(document.getElementById('p-stock').value);
             const image = document.getElementById('p-image').value.trim();
             const category = document.getElementById('p-category').value.trim();
+            const featured = document.getElementById('p-featured').checked;
 
-            await setDoc(doc(db, "products", id), { name, description, price, stock, image, category });
+            await setDoc(doc(db, "products", id), { name, description, price, stock, image, category, featured });
             alert("Product saved successfully!");
-            document.getElementById('add-product-form').reset();
-            loadAdminProducts();
+            
+            window.cancelEdit(); // Reset the form
+            loadAdminProducts(); // Refresh the list
         });
 
-        // Load Products into Admin View (Styled like main shop)
+        // Load Products into Admin View
         async function loadAdminProducts() {
             const listEl = document.getElementById('admin-product-list');
             listEl.innerHTML = '<p>Loading database...</p>';
             const querySnapshot = await getDocs(collection(db, "products"));
             
             listEl.innerHTML = '';
+            window.adminProductsData = {}; // Clear previous data
+
             querySnapshot.forEach((documentSnapshot) => {
                 const prodId = documentSnapshot.id;
                 const data = documentSnapshot.data();
                 
+                // Save to global memory for the edit button to use later
+                window.adminProductsData[prodId] = data;
+                
                 listEl.innerHTML += `
-                    <div class="product-card">
-                        <img src="${data.image}" alt="${data.name}" class="product-image">
-                        <div class="product-info">
-                            <h3 class="product-title">${data.name}</h3>
-                            <p class="product-description" style="font-size: 0.8rem; color: #888;">Category: ${data.category} | ID: ${prodId}</p>
-                            <div class="product-footer" style="margin-top: 1rem;">
-                                <div>
+                    <div class="product-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+                        <div>
+                            <img src="${data.image}" alt="${data.name}" class="product-image">
+                            <div class="product-info">
+                                <h3 class="product-title">${data.name}</h3>
+                                <p class="product-description" style="font-size: 0.8rem; color: #888;">Category: ${data.category} | ID: ${prodId}</p>
+                                <div style="margin-top: 0.5rem; margin-bottom: 1rem;">
                                     <span class="product-price" style="display:block; font-size:1rem;">RM${parseFloat(data.price).toFixed(2)}</span>
-                                    <span style="font-size:0.85rem; color: ${data.stock > 0 ? 'var(--primary-color)' : '#ef4444'};">Stock: ${data.stock}</span>
+                                    <span style="font-size:0.85rem; font-weight:600; color: ${data.stock > 0 ? 'var(--primary-color)' : '#ef4444'};">Stock: ${data.stock}</span>
                                 </div>
-                                <button onclick="deleteProduct('${prodId}')" style="background:#ef4444; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;">Delete</button>
                             </div>
+                        </div>
+                        
+                        <div class="product-info" style="padding-top: 0; display:flex; flex-wrap: wrap; gap:0.5rem;">
+                            <!-- Star/Feature Button -->
+                            <button onclick="toggleFeature('${prodId}')" style="flex: 1; min-width: 100%; background:${data.featured ? '#f59e0b' : '#e5e7eb'}; color:${data.featured ? 'white' : '#374151'}; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer; transition: all 0.2s;" title="Toggle Featured">
+                                ${data.featured ? '★ Featured on Home' : '☆ Pin to Home'}
+                            </button>
+                            
+                            <!-- Edit Button -->
+                            <button onclick="editProduct('${prodId}')" style="flex: 1; background:#3b82f6; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;">Edit</button>
+                            
+                            <!-- Delete Button -->
+                            <button onclick="deleteProduct('${prodId}')" style="flex: 1; background:#ef4444; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;">Delete</button>
                         </div>
                     </div>
                 `;
             });
         }
 
-        // Global Delete Function attached to window for inline onclick execution
+        // Feature Toggle Function
+        window.toggleFeature = async function(id) {
+            const currentData = window.adminProductsData[id];
+            const newStatus = !(currentData.featured || false); // Flip the boolean
+            
+            await updateDoc(doc(db, "products", id), {
+                featured: newStatus
+            });
+            loadAdminProducts(); // Refresh list to show new color
+        }
+
+        // Edit Function
+        window.editProduct = function(id) {
+            const data = window.adminProductsData[id];
+            
+            // Populate Form
+            const idInput = document.getElementById('p-id');
+            idInput.value = id;
+            idInput.setAttribute('readonly', true); // Lock ID so it updates instead of creates
+            idInput.style.backgroundColor = "#f3f4f6"; // Gray out the box
+            
+            document.getElementById('p-name').value = data.name;
+            document.getElementById('p-desc').value = data.description;
+            document.getElementById('p-price').value = data.price;
+            document.getElementById('p-stock').value = data.stock;
+            document.getElementById('p-image').value = data.image;
+            document.getElementById('p-category').value = data.category;
+            document.getElementById('p-featured').checked = data.featured || false;
+
+            // Update UI for Edit Mode
+            document.getElementById('form-title').textContent = "Edit Existing Product";
+            document.getElementById('submit-btn').textContent = "Update Product";
+            document.getElementById('cancel-edit-btn').style.display = "inline-block";
+            
+            // Scroll to the top of the form smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Cancel Edit Mode
+        window.cancelEdit = function() {
+            const form = document.getElementById('add-product-form');
+            form.reset(); // Clears all inputs
+            
+            const idInput = document.getElementById('p-id');
+            idInput.removeAttribute('readonly'); // Unlock ID for new products
+            idInput.style.backgroundColor = "var(--white)";
+            
+            document.getElementById('form-title').textContent = "Add New Product";
+            document.getElementById('submit-btn').textContent = "Save Product";
+            document.getElementById('cancel-edit-btn').style.display = "none";
+        }
+
+        // Delete Function
         window.deleteProduct = async function(id) {
             if (confirm("Are you sure you want to delete this product from the database?")) {
                 await deleteDoc(doc(db, "products", id));

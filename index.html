@@ -38,63 +38,15 @@
         </div>
     </header>
 
-    <!-- Featured Products Section -->
+    <!-- Dynamic Featured Products Section -->
     <main id="shop" class="shop-section">
         <h2 class="section-title">Featured Products</h2>
 
-        <div class="product-grid">
-            <!-- Item 1 -->
-            <div class="product-card">
-                <img src="https://placehold.co/400x400/e2e8f0/475569?text=Clear+Case" alt="Clear Phone Case" class="product-image">
-                <div class="product-info">
-                    <h3 class="product-title">Clear Bumper Case</h3>
-                    <p class="product-description">Minimalist protection.</p>
-                    <div class="product-footer">
-                        <span class="product-price">RM15.00</span>
-                        <a href="shop.html" class="add-to-cart" style="text-decoration:none; text-align:center;">View</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Item 2 -->
-            <div class="product-card">
-                <img src="https://placehold.co/400x400/e2e8f0/475569?text=Silicone+Case" alt="Silicone Phone Case" class="product-image">
-                <div class="product-info">
-                    <h3 class="product-title">Matte Silicone</h3>
-                    <p class="product-description">Soft touch, great grip.</p>
-                    <div class="product-footer">
-                        <span class="product-price">RM12.00</span>
-                        <a href="shop.html" class="add-to-cart" style="text-decoration:none; text-align:center;">View</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Item 3 -->
-            <div class="product-card">
-                <img src="https://placehold.co/400x400/e2e8f0/475569?text=Armor+Case" alt="Armor Phone Case" class="product-image">
-                <div class="product-info">
-                    <h3 class="product-title">Tough Armor</h3>
-                    <p class="product-description">Heavy duty drops.</p>
-                    <div class="product-footer">
-                        <span class="product-price">RM25.00</span>
-                        <a href="shop.html" class="add-to-cart" style="text-decoration:none; text-align:center;">View</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Item 4 -->
-            <div class="product-card">
-                <img src="https://placehold.co/400x400/e2e8f0/475569?text=Wallet+Case" alt="Wallet Phone Case" class="product-image">
-                <div class="product-info">
-                    <h3 class="product-title">Leather Folio</h3>
-                    <p class="product-description">Holds your cards.</p>
-                    <div class="product-footer">
-                        <span class="product-price">RM35.00</span>
-                        <a href="shop.html" class="add-to-cart" style="text-decoration:none; text-align:center;">View</a>
-                    </div>
-                </div>
-            </div>
+        <!-- Data will be injected here by Firebase -->
+        <div class="product-grid" id="featured-grid">
+            <p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">Loading featured products...</p>
         </div>
+        
     </main>
 
     <!-- Footer -->
@@ -102,5 +54,61 @@
         &copy; 2026 Maruu de' Shop. Serving PMU locally.
     </footer>
 
+    <!-- Firebase SDK & Script Logic for Homepage -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Your Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDQ7T8Lz1CtbJOgGp-DX5HtmQY814lWQ6U",
+            authDomain: "maruu-de--shop.firebaseapp.com",
+            projectId: "maruu-de--shop",
+            storageBucket: "maruu-de--shop.firebasestorage.app",
+            messagingSenderId: "948084838634",
+            appId: "1:948084838634:web:941c44687e96b508494793",
+            measurementId: "G-371J2BPF4C"   
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Fetch Data from Firebase on load
+        window.addEventListener('DOMContentLoaded', async () => {
+            const grid = document.getElementById('featured-grid');
+            const querySnapshot = await getDocs(collection(db, "products"));
+            
+            grid.innerHTML = ''; // Clear loading text
+            let hasFeatured = false;
+
+            querySnapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                
+                // Check if the product has the featured flag set to true
+                if (data.featured) {
+                    hasFeatured = true;
+                    grid.innerHTML += `
+                        <div class="product-card">
+                            <img src="${data.image}" alt="${data.name}" class="product-image">
+                            <div class="product-info">
+                                <h3 class="product-title">${data.name}</h3>
+                                <p class="product-description">${data.description}</p>
+                                <div class="product-footer">
+                                    <span class="product-price">RM${parseFloat(data.price).toFixed(2)}</span>
+                                    <a href="shop.html" class="add-to-cart" style="text-decoration:none; text-align:center;">View in Shop</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            // Fallback message if no products are featured
+            if (!hasFeatured) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No featured products at the moment.</p>';
+            }
+        });
+    </script>
 </body>
 </html>
