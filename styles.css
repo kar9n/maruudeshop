@@ -312,7 +312,7 @@ gap: 0.5rem;
 }
 }
 
-@media (min-width: 820px) {
+@media (min-width: 769px) {
   .mobile-navbar {
     display: none;
   }
