@@ -21,7 +21,7 @@
         </div>
     </nav>
 
-        <nav class="mobile-navbar">
+    <nav class="mobile-navbar">
         <div class="mobile-nav-container">
                 <a href="index.html">Home</a>
                 <a href="shop.html" class="btn-primary">Browse Products</a>
@@ -43,145 +43,45 @@
             <button class="tab-button" onclick="openModel(event, 'OlderModels')">Older Models</button>
         </div>
 
+        <!-- Dynamic Tab Contents -->
+        
         <!-- Tab Content: iPhone 17 -->
         <div id="iPhone17" class="tab-content" style="display: block;">
             <h3 class="model-subtitle">iPhone 17 / 17 Pro / 17 Pro Max / 17 Air</h3>
-            <div class="product-grid">
-                <!--Item 1 -->
-                <div class="product-card" id="product-17-pro-clear">
-                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=17+Pro+Clear" alt="iPhone 17 Pro Clear Case" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-title">17 Pro Clear Bumper</h3>
-                        <p class="product-description">Minimalist Protection.</p>
-                        <p class="product-stock" id="stock-text-17-pro-clear">Stock: Checking...</p>
-                        <div class="product-footer">
-                            <span class="product-price">RM15.00</span>
-                            <button class="add-to-cart" onclick="addToCart('17-pro-clear', '17 Pro Clear Bumper', 15.00)">Add</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!--Item 2 -->
-                <div class="product-card" id="product-17-air-silicone">
-                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=17+Air+Silicone" alt="iPhone 17 Air Silicone Case" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-title">17 Air Matte Silicone</h3>
-                        <p class="product-description">Soft touch, great grip.</p>
-                        <p class="product-stock" id="stock-text-17-air-silicone">Stock: Checking...</p>
-                        <div class="product-footer">
-                            <span class="product-price">RM12.00</span>
-                            <button class="add-to-cart" onclick="addToCart('17-air-silicone', '17 Air Matte Silicone', 12.00)">Add</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!--Item 3 -->
-                <div class="product-card" id="product-17-promax-armor">
-                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=17+ProMax+Armor" alt="iPhone 17 Pro Max Armor Case" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-title">17 Pro Max Tough Armor</h3>
-                        <p class="product-description">Heavy Duty Protection.</p>
-                        <p class="product-stock" id="stock-text-17-promax-armor">Stock: Checking...</p>
-                        <div class="product-footer">
-                            <span class="product-price">RM25.00</span>
-                            <button class="add-to-cart" onclick="addToCart('17-promax-armor', '17 Pro Max Tough Armor', 25.00)">Add</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="product-grid" id="grid-iPhone17">
+                <!-- Data injected by Firebase -->
             </div>
         </div>
 
         <!-- Tab Content: iPhone 16 -->
         <div id="iPhone16" class="tab-content">
             <h3 class="model-subtitle">iPhone 16 / 16 Plus / 16 Pro / 16 Pro Max</h3>
-            <div class="product-grid">
-                <!--Item 1 -->
-                <div class="product-card" id="product-16-clear">
-                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=16+Clear" alt="iPhone 16 Clear Case" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-title">16 Standard Clear Case</h3>
-                        <p class="product-description">Show off your color.</p>
-                        <p class="product-stock" id="stock-text-16-clear">Stock: Checking...</p>
-                        <div class="product-footer">
-                            <span class="product-price">RM10.00</span>
-                            <button class="add-to-cart" onclick="addToCart('16-clear', '16 Standard Clear Case', 10.00)">Add</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!--Item 2 -->
-                <div class="product-card" id="product-16-pro-leather">
-                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=16+Pro+Leather" alt="iPhone 16 Pro Leather Case" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-title">16 Pro Leather Folio</h3>
-                        <p class="product-description">Premium feel, card slots.</p>
-                        <p class="product-stock" id="stock-text-16-pro-leather">Stock: Checking...</p>
-                        <div class="product-footer">
-                            <span class="product-price">RM35.00</span>
-                            <button class="add-to-cart" onclick="addToCart('16-pro-leather', '16 Pro Leather Folio', 35.00)">Add</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="product-grid" id="grid-iPhone16">
+                <!-- Data injected by Firebase -->
             </div>
         </div>
 
         <!-- Tab Content: iPhone 15 -->
         <div id="iPhone15" class="tab-content">
             <h3 class="model-subtitle">iPhone 15 / 15 Plus / 15 Pro / 15 Pro Max</h3>
-            <div class="product-grid">
-                <!--Item 1 -->
-                <div class="product-card" id="product-15-pro-silicone">
-                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=15+Pro+Silicone" alt="iPhone 15 Pro Silicone" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-title">15 Pro Silicone Case</h3>
-                        <p class="product-description">Classic protection.</p>
-                        <p class="product-stock" id="stock-text-15-pro-silicone">Stock: Checking...</p>
-                        <div class="product-footer">
-                            <span class="product-price">RM8.00</span>
-                            <button class="add-to-cart" onclick="addToCart('15-pro-silicone', '15 Pro Silicone Case', 8.00)">Add</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="product-grid" id="grid-iPhone15">
+                <!-- Data injected by Firebase -->
             </div>
         </div>
 
         <!-- Tab Content: iPhone 14 -->
         <div id="iPhone14" class="tab-content">
             <h3 class="model-subtitle">iPhone 14 / 14 Plus / 14 Pro / 14 Pro Max</h3>
-            <div class="product-grid">
-                <!--Item 1 -->
-                <div class="product-card" id="product-14-clear">
-                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=14+Clear" alt="iPhone 14 Clear Case" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-title">14 Standard Clear Case</h3>
-                        <p class="product-description">Simple and clean.</p>
-                        <p class="product-stock" id="stock-text-14-clear">Stock: Checking...</p>
-                        <div class="product-footer">
-                            <span class="product-price">RM8.00</span>
-                            <button class="add-to-cart" onclick="addToCart('14-clear', '14 Standard Clear Case', 8.00)">Add</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="product-grid" id="grid-iPhone14">
+                <!-- Data injected by Firebase -->
             </div>
         </div>
 
         <!-- Tab Content: iPhone 13 -->
         <div id="iPhone13" class="tab-content">
             <h3 class="model-subtitle">iPhone 13 / 13 mini / 13 Pro / 13 Pro Max</h3>
-            <div class="product-grid">
-                <!--Item 1 -->
-                <div class="product-card" id="product-13-promax-leather">
-                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=13+ProMax+Leather" alt="iPhone 13 Pro Max Leather" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-title">13 Pro Max Leather Folio</h3>
-                        <p class="product-description">Elegant styling.</p>
-                        <p class="product-stock" id="stock-text-13-promax-leather">Stock: Checking...</p>
-                        <div class="product-footer">
-                            <span class="product-price">RM12.00</span>
-                            <button class="add-to-cart" onclick="addToCart('13-promax-leather', '13 Pro Max Leather Folio', 12.00)">Add</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="product-grid" id="grid-iPhone13">
+                <!-- Data injected by Firebase -->
             </div>
         </div>
         
@@ -189,20 +89,8 @@
         <div id="OlderModels" class="tab-content">
             <h3 class="model-subtitle">iPhone 12 / 11 / X / 8 / 7 / 6</h3>
             <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">Please contact us directly for availability on older models.</p>
-            <div class="product-grid">
-                <!--Item 1 -->
-                <div class="product-card" id="product-universal-pouch">
-                    <img src="https://placehold.co/400x400/e2e8f0/475569?text=Universal+Pouch" alt="Universal Pouch" class="product-image">
-                    <div class="product-info">
-                        <h3 class="product-title">Universal Soft Pouch</h3>
-                        <p class="product-description">Fits most older models.</p>
-                        <p class="product-stock" id="stock-text-universal-pouch">Stock: Checking...</p>
-                        <div class="product-footer">
-                            <span class="product-price">RM5.00</span>
-                            <button class="add-to-cart" onclick="addToCart('universal-pouch', 'Universal Soft Pouch', 5.00)">Add</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="product-grid" id="grid-OlderModels">
+                <!-- Data injected by Firebase -->
             </div>
         </div>
 
@@ -261,10 +149,67 @@
     <!-- Toast Notification -->
     <div class="toast" id="toast">Added to cart!</div>
 
-    <!-- JavaScript for Tab Switching, Cart Logic, and WhatsApp -->
-    <script>
+    <!-- Firebase SDK & Script Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDQ7T8Lz1CtbJOgGp-DX5HtmQY814lWQ6U",
+            authDomain: "maruu-de--shop.firebaseapp.com",
+            projectId: "maruu-de--shop",
+            storageBucket: "maruu-de--shop.firebasestorage.app",
+            messagingSenderId: "948084838634",
+            appId: "1:948084838634:web:941c44687e96b508494793",
+            measurementId: "G-371J2BPF4C"   
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Global objects
+        window.stockState = {};
+        window.cart = {};
+
+        // Fetch Data from Firebase on load
+        window.addEventListener('DOMContentLoaded', async () => {
+            const querySnapshot = await getDocs(collection(db, "products"));
+            
+            querySnapshot.forEach((docSnap) => {
+                const id = docSnap.id;
+                const data = docSnap.data();
+                
+                // Store live stock
+                window.stockState[id] = data.stock;
+                
+                // Inject product card into the correct category tab grid
+                const grid = document.getElementById(`grid-${data.category}`);
+                if (grid) {
+                    const isSoldOut = data.stock <= 0;
+                    grid.innerHTML += `
+                        <div class="product-card ${isSoldOut ? 'sold-out' : ''}" id="product-${id}">
+                            <img src="${data.image}" alt="${data.name}" class="product-image">
+                            <div class="product-info">
+                                <h3 class="product-title">${data.name}</h3>
+                                <p class="product-description">${data.description}</p>
+                                <p class="product-stock" id="stock-text-${id}" style="color: ${isSoldOut ? '#ef4444' : 'var(--primary-color)'}">
+                                    ${isSoldOut ? 'Stock: Sold Out' : `Stock: ${data.stock} available`}
+                                </p>
+                                <div class="product-footer">
+                                    <span class="product-price">RM${parseFloat(data.price).toFixed(2)}</span>
+                                    <button class="add-to-cart" onclick="addToCart('${id}', '${data.name}', ${data.price})" ${isSoldOut ? 'disabled' : ''}>
+                                        ${isSoldOut ? 'SOLD OUT' : 'Add'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        });
+
         // Tab Functionality
-        function openModel(evt, modelName) {
+        window.openModel = function(evt, modelName) {
             var tabcontent = document.getElementsByClassName("tab-content");
             for (var i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].style.display = "none";
@@ -277,75 +222,53 @@
             evt.currentTarget.className += " active";
         }
 
-        // ==========================================
-        // SHOPPING CART & STOCK LOGIC
-        // ==========================================
-        const stockState = {
-            '17-pro-clear': 3,
-            '17-air-silicone': 2,
-            '17-promax-armor': 5,
-            '16-clear': 4,
-            '16-pro-leather': 1,
-            '15-pro-silicone': 3,
-            '14-clear': 0, // Sold out demo
-            '13-promax-leather': 2,
-            'universal-pouch': 10
-        };
-
-        let cart = {};
-
-        window.addEventListener('DOMContentLoaded', () => {
-            updateStockUI();
-        });
-
-        function showToast(msg) {
+        // Cart functions
+        window.showToast = function(msg) {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        function addToCart(id, name, price) {
-            const currentQty = cart[id] ? cart[id].qty : 0;
-            
-            if (currentQty >= stockState[id]) {
+        window.addToCart = function(id, name, price) {
+            const currentQty = window.cart[id] ? window.cart[id].qty : 0;
+            if (currentQty >= window.stockState[id]) {
                 showToast('Not enough stock available!');
                 return;
             }
             
-            if (!cart[id]) {
-                cart[id] = { name, price, qty: 1 };
+            if (!window.cart[id]) {
+                window.cart[id] = { name, price, qty: 1 };
             } else {
-                cart[id].qty++;
+                window.cart[id].qty++;
             }
-            
             updateCartCount();
             showToast(`${name} added to cart!`);
         }
 
-        function removeFromCart(id) {
-            if (cart[id]) {
-                const name = cart[id].name;
-                delete cart[id];
+        window.removeFromCart = function(id) {
+            if (window.cart[id]) {
+                const name = window.cart[id].name;
+                delete window.cart[id];
                 updateCartCount();
-                openCart(); // Refresh cart view
+                openCart();
                 showToast(`Removed ${name} from cart`);
             }
         }
 
-        function updateCartCount() {
-            const count = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
+        window.updateCartCount = function() {
+            const count = Object.values(window.cart).reduce((sum, item) => sum + item.qty, 0);
             document.getElementById('cart-count').textContent = count;
         }
 
-        function openCart() {
+        window.openCart = function() {
             const container = document.getElementById('cart-items');
             const totalEl = document.getElementById('cart-total-price');
             const btnCheckout = document.getElementById('btn-checkout');
             
             container.innerHTML = '';
             let total = 0;
-            const keys = Object.keys(cart);
+            const keys = Object.keys(window.cart);
             
             if (keys.length === 0) {
                 container.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Your cart is empty.</p>';
@@ -353,9 +276,8 @@
             } else {
                 btnCheckout.disabled = false;
                 keys.forEach(id => {
-                    const item = cart[id];
+                    const item = window.cart[id];
                     total += item.price * item.qty;
-                    
                     container.innerHTML += `
                         <div class="cart-item">
                             <div class="cart-item-info">
@@ -370,25 +292,24 @@
                     `;
                 });
             }
-            
             totalEl.textContent = `RM${total.toFixed(2)}`;
             document.getElementById('cart-modal').classList.add('active');
         }
 
-        function closeCart() {
+        window.closeCart = function() {
             document.getElementById('cart-modal').classList.remove('active');
         }
 
-        function proceedToCheckout() {
+        window.proceedToCheckout = function() {
             closeCart();
             document.getElementById('checkout-modal').classList.add('active');
         }
 
-        function closeCheckout() {
+        window.closeCheckout = function() {
             document.getElementById('checkout-modal').classList.remove('active');
         }
 
-        function submitCheckout() {
+        window.submitCheckout = function() {
             const name = document.getElementById('buyer-name').value.trim();
             const location = document.getElementById('pickup-location').value.trim();
             
@@ -404,10 +325,11 @@
             message += `*Order Details:*\n`;
             
             let total = 0;
-            for (const [id, item] of Object.entries(cart)) {
+            for (const [id, item] of Object.entries(window.cart)) {
                 message += `- ${item.qty}x ${item.name} (RM${(item.price * item.qty).toFixed(2)})\n`;
                 total += item.price * item.qty;
-                stockState[id] -= item.qty;
+                // Note: The UI updates visually, but real stock deduct would require a backend cloud function in production.
+                window.stockState[id] -= item.qty; 
             }
             
             message += `\n*Total Amount:* RM${total.toFixed(2)}\n\n`;
@@ -416,25 +338,26 @@
             const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
             window.open(url, '_blank');
             
-            cart = {};
+            window.cart = {};
             updateCartCount();
             updateStockUI();
             closeCheckout();
             
             document.getElementById('buyer-name').value = '';
             document.getElementById('pickup-location').value = '';
-            
             showToast('Redirecting to WhatsApp...');
         }
 
-        function updateStockUI() {
-            for (const [id, stock] of Object.entries(stockState)) {
+        window.updateStockUI = function() {
+            for (const [id, stock] of Object.entries(window.stockState)) {
                 const card = document.getElementById(`product-${id}`);
                 const stockText = document.getElementById(`stock-text-${id}`);
+                
                 if (stockText) {
                     stockText.textContent = stock > 0 ? `Stock: ${stock} available` : 'Stock: Sold Out';
                     stockText.style.color = stock > 0 ? 'var(--primary-color)' : '#ef4444';
                 }
+                
                 if (card) {
                     const btn = card.querySelector('.add-to-cart');
                     if (stock <= 0) {
