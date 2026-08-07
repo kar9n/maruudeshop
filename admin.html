@@ -38,17 +38,54 @@
 
         <!-- Admin Dashboard (Hidden by default) -->
         <div id="admin-dashboard" style="display: none;">
-            <h3 class="model-subtitle" style="text-align: left; margin-bottom: 1rem;">Add New Product</h3>
-            <form id="add-product-form" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 4rem; max-width: 600px;">
-                <input type="text" id="p-id" placeholder="Product ID (e.g. 17-pro-clear)" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
-                <input type="text" id="p-name" placeholder="Product Name" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
-                <input type="text" id="p-desc" placeholder="Description" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
-                <input type="number" id="p-price" placeholder="Price (RM)" step="0.01" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
-                <input type="number" id="p-stock" placeholder="Stock Count" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
-                <input type="text" id="p-image" placeholder="Image URL" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
-                <input type="text" id="p-category" placeholder="Category ID (e.g. iPhone17)" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
-                <button type="submit" class="btn-full" style="max-width: 200px;">Save Product</button>
-            </form>
+            
+            <!-- Side-by-Side Wrapper for Form and Guide -->
+            <div style="display: flex; flex-wrap: wrap; gap: 3rem; margin-bottom: 4rem; align-items: flex-start;">
+                
+                <!-- Left Side: Form -->
+                <div style="flex: 1; min-width: 300px; max-width: 600px;">
+                    <h3 class="model-subtitle" style="text-align: left; margin-bottom: 1rem;">Add New Product</h3>
+                    <form id="add-product-form" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <input type="text" id="p-id" placeholder="Product ID (e.g. 17-pro-clear)" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
+                        <input type="text" id="p-name" placeholder="Product Name" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
+                        <input type="text" id="p-desc" placeholder="Description" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
+                        <input type="number" id="p-price" placeholder="Price (RM)" step="0.01" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
+                        <input type="number" id="p-stock" placeholder="Stock Count" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
+                        <input type="text" id="p-image" placeholder="Image URL" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
+                        <input type="text" id="p-category" placeholder="Category ID (e.g. iPhone17)" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
+                        <button type="submit" class="btn-full" style="max-width: 200px;">Save Product</button>
+                    </form>
+                </div>
+
+                <!-- Right Side: Guide -->
+                <div style="flex: 1; min-width: 300px; background-color: #f9fafb; padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.5rem;">Quick Guide</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Follow these rules to ensure your products display correctly on the live shop page.</p>
+                    
+                    <h4 style="font-size: 1rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem;">Valid Category IDs</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Must match exactly (case-sensitive) so the product goes to the right tab:</p>
+                    <ul style="font-size: 0.85rem; color: var(--text-dark); margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                        <li><code>iPhone17</code></li>
+                        <li><code>iPhone16</code></li>
+                        <li><code>iPhone15</code></li>
+                        <li><code>iPhone14</code></li>
+                        <li><code>iPhone13</code></li>
+                        <li><code>OlderModels</code></li>
+                    </ul>
+
+                    <h4 style="font-size: 1rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem;">Product ID Formatting</h4>
+                    <ul style="font-size: 0.85rem; color: var(--text-dark); margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                        <li>Must be completely <strong>unique</strong> for every item.</li>
+                        <li>No spaces allowed (use hyphens instead).</li>
+                        <li>Keep it lowercase for consistency.</li>
+                        <li><em>Example:</em> <code>17-pro-clear</code> or <code>15-leather-black</code></li>
+                    </ul>
+
+                    <h4 style="font-size: 1rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem;">Image URLs</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-dark);">Paste a direct link to the image (e.g., ending in .png or .jpg). If you don't have an image ready, use: <br><code>https://placehold.co/400x400/e2e8f0/475569?text=No+Image</code></p>
+                </div>
+
+            </div>
 
             <h3 class="model-subtitle" style="text-align: left; margin-bottom: 1rem;">Existing Inventory</h3>
             <!-- Utilizes your exact product grid layout -->
