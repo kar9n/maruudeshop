@@ -39,7 +39,6 @@
         <!-- Admin Dashboard (Hidden by default) -->
         <div id="admin-dashboard" style="display: none;">
             
-            <!-- Side-by-Side Wrapper for Form and Guide -->
             <div style="display: flex; flex-wrap: wrap; gap: 3rem; margin-bottom: 4rem; align-items: flex-start;">
                 
                 <!-- Left Side: Form -->
@@ -51,7 +50,20 @@
                         <input type="text" id="p-desc" placeholder="Description" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
                         <input type="number" id="p-price" placeholder="Price (RM)" step="0.01" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
                         <input type="number" id="p-stock" placeholder="Stock Count" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
-                        <input type="text" id="p-image" placeholder="Image Direct URL (e.g. https://...)" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
+                        
+                        <!-- Auto-Compressing File Picker -->
+                        <div style="padding: 1rem; border: 1px dashed var(--border-color); border-radius: 6px; background-color: #f9fafb;">
+                            <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">Select Product Image (Auto-Compressed)</label>
+                            <input type="file" id="p-image-file" accept="image/*" class="form-group input" style="width: 100%;">
+                            <input type="hidden" id="p-image-data"> <!-- Holds compressed base64 data -->
+                            
+                            <!-- Preview Box -->
+                            <div id="image-preview-container" style="margin-top: 1rem; display: none;">
+                                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">Image Loaded & Compressed:</p>
+                                <img id="preview-img" src="" style="width: 80px; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);">
+                            </div>
+                        </div>
+
                         <input type="text" id="p-category" placeholder="Category ID (e.g. iPhone17)" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
                         
                         <label style="font-size: 0.95rem; font-weight: 600; color: var(--text-dark); display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
@@ -72,7 +84,6 @@
                     <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Follow these rules to ensure your products display correctly on the live shop page.</p>
                     
                     <h4 style="font-size: 1rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem;">Valid Category IDs</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Must match exactly (case-sensitive) so the product goes to the right tab:</p>
                     <ul style="font-size: 0.85rem; color: var(--text-dark); margin-bottom: 1.5rem; padding-left: 1.5rem;">
                         <li><code>iPhone17</code></li>
                         <li><code>iPhone16</code></li>
@@ -82,16 +93,8 @@
                         <li><code>OlderModels</code></li>
                     </ul>
 
-                    <h4 style="font-size: 1rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem;">Product ID Formatting</h4>
-                    <ul style="font-size: 0.85rem; color: var(--text-dark); margin-bottom: 1.5rem; padding-left: 1.5rem;">
-                        <li>Must be completely <strong>unique</strong> for every item.</li>
-                        <li>No spaces allowed (use hyphens instead).</li>
-                        <li>Keep it lowercase for consistency.</li>
-                        <li><em>Example:</em> <code>17-pro-clear</code></li>
-                    </ul>
-
-                    <h4 style="font-size: 1rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem;">Image Links</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-dark);">Upload your photo to a free host like ImgBB, copy the direct image link, and paste it here.</p>
+                    <h4 style="font-size: 1rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem;">Image Upload</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-dark);">Simply pick a photo straight from your phone's gallery. The system will automatically resize and compress it for fast loading!</p>
                 </div>
 
             </div>
@@ -106,7 +109,7 @@
         &copy; 2026 Maruu de' Shop. Serving PMU locally.
     </footer>
 
-    <!-- Firebase SDK Scripts -->
+    <!-- Firebase SDK Scripts & Compression Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -133,13 +136,11 @@
         const loginSection = document.getElementById('login-section');
         const adminDashboard = document.getElementById('admin-dashboard');
 
-        // Handle Google Login Popup
         loginBtn.addEventListener('click', async () => {
             const provider = new GoogleAuthProvider();
             try {
                 const result = await signInWithPopup(auth, provider);
-                const user = result.user;
-                if (user.email !== allowedEmail) {
+                if (result.user.email !== allowedEmail) {
                     alert("Access Denied: You are not authorized as an admin.");
                     auth.signOut();
                 }
@@ -148,7 +149,6 @@
             }
         });
 
-        // Monitor Login State
         onAuthStateChanged(auth, (user) => {
             if (user && user.email === allowedEmail) {
                 loginSection.style.display = 'none';
@@ -160,6 +160,54 @@
             }
         });
 
+        // Browser-Side Image Compressor Function using HTML5 Canvas
+        const imageFileInput = document.getElementById('p-image-file');
+        imageFileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800; // Max width for crisp mobile view
+                    const MAX_HEIGHT = 1000;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Compress to JPEG with 0.75 quality (~75% reduction in size)
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+                    
+                    // Store compressed string into hidden input
+                    document.getElementById('p-image-data').value = dataUrl;
+                    
+                    // Show Preview
+                    document.getElementById('image-preview-container').style.display = 'block';
+                    document.getElementById('preview-img').src = dataUrl;
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
         // Add or Update Product in Firestore
         document.getElementById('add-product-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -168,12 +216,23 @@
             const description = document.getElementById('p-desc').value.trim();
             const price = parseFloat(document.getElementById('p-price').value);
             const stock = parseInt(document.getElementById('p-stock').value);
-            const image = document.getElementById('p-image').value.trim();
             const category = document.getElementById('p-category').value.trim();
             const featured = document.getElementById('p-featured').checked;
+            
+            let image = document.getElementById('p-image-data').value;
+            
+            // If editing and no new image was picked, retain the old image link from global data
+            if (!image && window.adminProductsData[id]) {
+                image = window.adminProductsData[id].image;
+            }
+
+            if (!image) {
+                alert("Please select a product image.");
+                return;
+            }
 
             await setDoc(doc(db, "products", id), { name, description, price, stock, image, category, featured });
-            alert("Product saved successfully!");
+            alert("Product saved successfully with auto-compressed image!");
             
             window.cancelEdit();
             loadAdminProducts();
@@ -197,7 +256,7 @@
                 listEl.innerHTML += `
                     <div class="product-card" style="display:flex; flex-direction:column; justify-content:space-between;">
                         <div>
-                            <img src="${data.image}" alt="${data.name}" class="product-image">
+                            <img src="${data.image}" alt="${data.name}" class="product-image" loading="lazy">
                             <div class="product-info">
                                 <h3 class="product-title">${data.name}</h3>
                                 <p class="product-description" style="font-size: 0.8rem; color: #888;">Category: ${data.category} | ID: ${prodId}</p>
@@ -239,9 +298,12 @@
             document.getElementById('p-desc').value = data.description;
             document.getElementById('p-price').value = data.price;
             document.getElementById('p-stock').value = data.stock;
-            document.getElementById('p-image').value = data.image;
             document.getElementById('p-category').value = data.category;
             document.getElementById('p-featured').checked = data.featured || false;
+            
+            document.getElementById('p-image-data').value = data.image;
+            document.getElementById('image-preview-container').style.display = 'block';
+            document.getElementById('preview-img').src = data.image;
 
             document.getElementById('form-title').textContent = "Edit Existing Product";
             document.getElementById('submit-btn').textContent = "Update Product";
@@ -257,6 +319,9 @@
             const idInput = document.getElementById('p-id');
             idInput.removeAttribute('readonly');
             idInput.style.backgroundColor = "var(--white)";
+            
+            document.getElementById('p-image-data').value = "";
+            document.getElementById('image-preview-container').style.display = 'none';
             
             document.getElementById('form-title').textContent = "Add New Product";
             document.getElementById('submit-btn').textContent = "Save Product";
