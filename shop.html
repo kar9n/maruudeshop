@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products - Maruu de' Shop</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -32,10 +32,9 @@
 
     <nav class="contact-navbar">
         <div class="contact-info">
-            <span style="margin-right: 1rem; color: var(--text-muted);">Contact Us:</span>
-            <!-- Opens the WhatsApp Modal instead of a direct link -->
+            <span style="color: var(--text-muted);">Contact Us:</span>
             <a href="javascript:void(0)" onclick="openWAModal()" rel="noopener noreferrer">
-                <i class="fa fa-whatsapp" style="color: #25D366; scale: 1.8;"></i>
+                <i class="fa fa-whatsapp" style="color: #25D366; font-size: 1.8rem;"></i>
             </a>
         </div>
    </nav>
@@ -169,6 +168,8 @@
                 <button class="btn-full wa-btn" onclick="sendWAMessage('Hello, I have a general inquiry about Maruu de Shop.')">General Inquiry</button>
                 <button class="btn-full wa-btn" onclick="sendWAMessage('Hi, I want to check the stock availability for a specific phone model.')">Check Stock Availability</button>
                 <button class="btn-full wa-btn" onclick="sendWAMessage('Hello, I need help tracking or updating my recent order.')">Order Support</button>
+                <button class="btn-full wa-btn" onclick="sendWAMessage('Hi, I am interested in requesting a custom case or a bulk order.')">Custom / Bulk Order</button>
+            </div>
         </div>
     </div>
 
@@ -193,11 +194,9 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Global objects
         window.stockState = {};
         window.cart = {};
 
-        // Fetch Data from Firebase on load
         window.addEventListener('DOMContentLoaded', async () => {
             const querySnapshot = await getDocs(collection(db, "products"));
             
@@ -205,16 +204,14 @@
                 const id = docSnap.id;
                 const data = docSnap.data();
                 
-                // Store live stock
                 window.stockState[id] = data.stock;
                 
-                // Inject product card into the correct category tab grid
                 const grid = document.getElementById(`grid-${data.category}`);
                 if (grid) {
                     const isSoldOut = data.stock <= 0;
                     grid.innerHTML += `
                         <div class="product-card ${isSoldOut ? 'sold-out' : ''}" id="product-${id}">
-                            <img src="${data.image}" alt="${data.name}" class="product-image">
+                            <img src="${data.image}" alt="${data.name}" class="product-image" loading="lazy">
                             <div class="product-info">
                                 <h3 class="product-title">${data.name}</h3>
                                 <p class="product-description">${data.description}</p>
@@ -234,7 +231,6 @@
             });
         });
 
-        // Tab Functionality
         window.openModel = function(evt, modelName) {
             var tabcontent = document.getElementsByClassName("tab-content");
             for (var i = 0; i < tabcontent.length; i++) {
@@ -248,7 +244,6 @@
             evt.currentTarget.className += " active";
         }
 
-        // Cart functions
         window.showToast = function(msg) {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
@@ -354,7 +349,6 @@
             for (const [id, item] of Object.entries(window.cart)) {
                 message += `- ${item.qty}x ${item.name} (RM${(item.price * item.qty).toFixed(2)})\n`;
                 total += item.price * item.qty;
-                // Note: The UI updates visually, but real stock deduct would require a backend cloud function in production.
                 window.stockState[id] -= item.qty; 
             }
             
@@ -403,7 +397,6 @@
             }
         }
 
-        // WhatsApp Modal Functions
         window.openWAModal = function() {
             document.getElementById('wa-modal').classList.add('active');
         }

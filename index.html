@@ -32,10 +32,9 @@
     
     <nav class="contact-navbar">
         <div class="contact-info">
-            <span style="margin-right: 1rem; color: var(--text-muted);">Contact Us:</span>
-            <!-- Opens the WhatsApp Modal instead of a direct link -->
+            <span style="color: var(--text-muted);">Contact Us:</span>
             <a href="javascript:void(0)" onclick="openWAModal()" rel="noopener noreferrer">
-                <i class="fa fa-whatsapp" style="color: #25D366; scale: 1.8;"></i>
+                <i class="fa fa-whatsapp" style="color: #25D366; font-size: 1.8rem;"></i>
             </a>
         </div>
    </nav>
@@ -47,21 +46,6 @@
             <p>We sell the best phone cases in PMU! Protect your device with style, durability, and a premium feel.</p>
             <a href="shop.html" class="cta-button">Shop Now</a>
         </div>
-        <!-- WhatsApp Selection Modal -->
-    <div class="modal-overlay" id="wa-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">How can we help?</h3>
-                <button class="close-btn" onclick="closeWAModal()">&times;</button>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Select a topic below to start a chat with us on WhatsApp:</p>
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <button class="btn-full wa-btn" onclick="sendWAMessage('Hello, I have a general inquiry about Maruu de Shop.')">General Inquiry</button>
-                <button class="btn-full wa-btn" onclick="sendWAMessage('Hi, I want to check the stock availability for a specific phone model.')">Check Stock Availability</button>
-                <button class="btn-full wa-btn" onclick="sendWAMessage('Hello, I need help tracking or updating my recent order.')">Order Support</button>
-            </div>
-        </div>
-    </div>
     </header>
 
     <!-- Dynamic Featured Products Section -->
@@ -80,12 +64,28 @@
         &copy; 2026 Maruu de' Shop. Serving PMU locally.
     </footer>
 
+    <!-- WhatsApp Selection Modal -->
+    <div class="modal-overlay" id="wa-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">How can we help?</h3>
+                <button class="close-btn" onclick="closeWAModal()">&times;</button>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Select a topic below to start a chat with us on WhatsApp:</p>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <button class="btn-full wa-btn" onclick="sendWAMessage('Hello, I have a general inquiry about Maruu de Shop.')">General Inquiry</button>
+                <button class="btn-full wa-btn" onclick="sendWAMessage('Hi, I want to check the stock availability for a specific phone model.')">Check Stock Availability</button>
+                <button class="btn-full wa-btn" onclick="sendWAMessage('Hello, I need help tracking or updating my recent order.')">Order Support</button>
+                <button class="btn-full wa-btn" onclick="sendWAMessage('Hi, I am interested in requesting a custom case or a bulk order.')">Custom / Bulk Order</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase SDK & Script Logic for Homepage -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Your Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDQ7T8Lz1CtbJOgGp-DX5HtmQY814lWQ6U",
             authDomain: "maruu-de--shop.firebaseapp.com",
@@ -96,27 +96,24 @@
             measurementId: "G-371J2BPF4C"   
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Fetch Data from Firebase on load
         window.addEventListener('DOMContentLoaded', async () => {
             const grid = document.getElementById('featured-grid');
             const querySnapshot = await getDocs(collection(db, "products"));
             
-            grid.innerHTML = ''; // Clear loading text
+            grid.innerHTML = ''; 
             let hasFeatured = false;
 
             querySnapshot.forEach((docSnap) => {
                 const data = docSnap.data();
                 
-                // Check if the product has the featured flag set to true
                 if (data.featured) {
                     hasFeatured = true;
                     grid.innerHTML += `
                         <div class="product-card">
-                            <img src="${data.image}" alt="${data.name}" class="product-image">
+                            <img src="${data.image}" alt="${data.name}" class="product-image" loading="lazy">
                             <div class="product-info">
                                 <h3 class="product-title">${data.name}</h3>
                                 <p class="product-description">${data.description}</p>
@@ -130,13 +127,11 @@
                 }
             });
 
-            // Fallback message if no products are featured
             if (!hasFeatured) {
                 grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No featured products at the moment.</p>';
             }
         });
 
-        // WhatsApp Modal Functions
         window.openWAModal = function() {
             document.getElementById('wa-modal').classList.add('active');
         }
