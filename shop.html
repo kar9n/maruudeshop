@@ -179,7 +179,7 @@
     <!-- Firebase SDK & Script Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDQ7T8Lz1CtbJOgGp-DX5HtmQY814lWQ6U",
@@ -330,7 +330,7 @@
             document.getElementById('checkout-modal').classList.remove('active');
         }
 
-        window.submitCheckout = function() {
+        window.submitCheckout = async function() {
             const name = document.getElementById('buyer-name').value.trim();
             const location = document.getElementById('pickup-location').value.trim();
             
@@ -349,7 +349,17 @@
             for (const [id, item] of Object.entries(window.cart)) {
                 message += `- ${item.qty}x ${item.name} (RM${(item.price * item.qty).toFixed(2)})\n`;
                 total += item.price * item.qty;
+                
+                // Calculate new stock count
                 window.stockState[id] -= item.qty; 
+                const newStock = Math.max(0, window.stockState[id]);
+
+                // PERSIST TO FIREBASE: Updates the database permanently
+                try {
+                    await updateDoc(doc(db, "products", id), { stock: newStock });
+                } catch (error) {
+                    console.error("Failed to update stock in database:", error);
+                }
             }
             
             message += `\n*Total Amount:* RM${total.toFixed(2)}\n\n`;
