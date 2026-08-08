@@ -51,7 +51,7 @@
                         <input type="text" id="p-desc" placeholder="Description" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
                         <input type="number" id="p-price" placeholder="Price (RM)" step="0.01" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
                         <input type="number" id="p-stock" placeholder="Stock Count" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
-                        <input type="text" id="p-image" placeholder="Image URL" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
+                        <input type="text" id="p-image" placeholder="Image Direct URL (e.g. https://...)" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
                         <input type="text" id="p-category" placeholder="Category ID (e.g. iPhone17)" required class="form-group input" style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px;">
                         
                         <label style="font-size: 0.95rem; font-weight: 600; color: var(--text-dark); display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
@@ -87,17 +87,16 @@
                         <li>Must be completely <strong>unique</strong> for every item.</li>
                         <li>No spaces allowed (use hyphens instead).</li>
                         <li>Keep it lowercase for consistency.</li>
-                        <li><em>Example:</em> <code>17-pro-clear</code> or <code>15-leather-black</code></li>
+                        <li><em>Example:</em> <code>17-pro-clear</code></li>
                     </ul>
 
-                    <h4 style="font-size: 1rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem;">Image URLs</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-dark);">Paste a direct link to the image (e.g., ending in .png or .jpg). If you don't have an image ready, use: <br><code>https://placehold.co/400x400/e2e8f0/475569?text=No+Image</code></p>
+                    <h4 style="font-size: 1rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem;">Image Links</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-dark);">Upload your photo to a free host like ImgBB, copy the direct image link, and paste it here.</p>
                 </div>
 
             </div>
 
             <h3 class="model-subtitle" style="text-align: left; margin-bottom: 1rem;">Existing Inventory</h3>
-            <!-- Utilizes your exact product grid layout -->
             <div id="admin-product-list" class="product-grid"></div>
         </div>
     </main>
@@ -111,7 +110,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        // Added updateDoc for the toggle feature
         import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -129,7 +127,6 @@
         const db = getFirestore(app);
         const allowedEmail = "georgeschan93@gmail.com";
 
-        // Store loaded products globally so we can access them for the edit function
         window.adminProductsData = {};
 
         const loginBtn = document.getElementById('google-login-btn');
@@ -142,7 +139,6 @@
             try {
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
-                
                 if (user.email !== allowedEmail) {
                     alert("Access Denied: You are not authorized as an admin.");
                     auth.signOut();
@@ -179,8 +175,8 @@
             await setDoc(doc(db, "products", id), { name, description, price, stock, image, category, featured });
             alert("Product saved successfully!");
             
-            window.cancelEdit(); // Reset the form
-            loadAdminProducts(); // Refresh the list
+            window.cancelEdit();
+            loadAdminProducts();
         });
 
         // Load Products into Admin View
@@ -190,13 +186,12 @@
             const querySnapshot = await getDocs(collection(db, "products"));
             
             listEl.innerHTML = '';
-            window.adminProductsData = {}; // Clear previous data
+            window.adminProductsData = {};
 
             querySnapshot.forEach((documentSnapshot) => {
                 const prodId = documentSnapshot.id;
                 const data = documentSnapshot.data();
                 
-                // Save to global memory for the edit button to use later
                 window.adminProductsData[prodId] = data;
                 
                 listEl.innerHTML += `
@@ -214,15 +209,10 @@
                         </div>
                         
                         <div class="product-info" style="padding-top: 0; display:flex; flex-wrap: wrap; gap:0.5rem;">
-                            <!-- Star/Feature Button -->
                             <button onclick="toggleFeature('${prodId}')" style="flex: 1; min-width: 100%; background:${data.featured ? '#f59e0b' : '#e5e7eb'}; color:${data.featured ? 'white' : '#374151'}; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer; transition: all 0.2s;" title="Toggle Featured">
                                 ${data.featured ? '★ Featured on Home' : '☆ Pin to Home'}
                             </button>
-                            
-                            <!-- Edit Button -->
                             <button onclick="editProduct('${prodId}')" style="flex: 1; background:#3b82f6; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;">Edit</button>
-                            
-                            <!-- Delete Button -->
                             <button onclick="deleteProduct('${prodId}')" style="flex: 1; background:#ef4444; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;">Delete</button>
                         </div>
                     </div>
@@ -230,26 +220,20 @@
             });
         }
 
-        // Feature Toggle Function
         window.toggleFeature = async function(id) {
             const currentData = window.adminProductsData[id];
-            const newStatus = !(currentData.featured || false); // Flip the boolean
-            
-            await updateDoc(doc(db, "products", id), {
-                featured: newStatus
-            });
-            loadAdminProducts(); // Refresh list to show new color
+            const newStatus = !(currentData.featured || false);
+            await updateDoc(doc(db, "products", id), { featured: newStatus });
+            loadAdminProducts(); 
         }
 
-        // Edit Function
         window.editProduct = function(id) {
             const data = window.adminProductsData[id];
             
-            // Populate Form
             const idInput = document.getElementById('p-id');
             idInput.value = id;
-            idInput.setAttribute('readonly', true); // Lock ID so it updates instead of creates
-            idInput.style.backgroundColor = "#f3f4f6"; // Gray out the box
+            idInput.setAttribute('readonly', true);
+            idInput.style.backgroundColor = "#f3f4f6";
             
             document.getElementById('p-name').value = data.name;
             document.getElementById('p-desc').value = data.description;
@@ -259,22 +243,19 @@
             document.getElementById('p-category').value = data.category;
             document.getElementById('p-featured').checked = data.featured || false;
 
-            // Update UI for Edit Mode
             document.getElementById('form-title').textContent = "Edit Existing Product";
             document.getElementById('submit-btn').textContent = "Update Product";
             document.getElementById('cancel-edit-btn').style.display = "inline-block";
             
-            // Scroll to the top of the form smoothly
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Cancel Edit Mode
         window.cancelEdit = function() {
             const form = document.getElementById('add-product-form');
-            form.reset(); // Clears all inputs
+            form.reset();
             
             const idInput = document.getElementById('p-id');
-            idInput.removeAttribute('readonly'); // Unlock ID for new products
+            idInput.removeAttribute('readonly');
             idInput.style.backgroundColor = "var(--white)";
             
             document.getElementById('form-title').textContent = "Add New Product";
@@ -282,7 +263,6 @@
             document.getElementById('cancel-edit-btn').style.display = "none";
         }
 
-        // Delete Function
         window.deleteProduct = async function(id) {
             if (confirm("Are you sure you want to delete this product from the database?")) {
                 await deleteDoc(doc(db, "products", id));
