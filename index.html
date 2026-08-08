@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Maruu de' Shop</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -28,6 +29,16 @@
                 <a href="admin.html" class="btn-secondary">Admin Portal</a>
         </div>
     </nav>
+    
+    <nav class="contact-navbar">
+        <div class="contact-info">
+            <span style="margin-right: 1rem; color: var(--text-muted);">Contact Us:</span>
+            <!-- Opens the WhatsApp Modal instead of a direct link -->
+            <a href="javascript:void(0)" onclick="openWAModal()" rel="noopener noreferrer">
+                <i class="fa fa-whatsapp" style="color: #25D366; scale: 1.8;"></i>
+            </a>
+        </div>
+   </nav>
 
     <!-- Main Content (Hero Section) -->
     <header id="home" class="hero">
@@ -36,6 +47,21 @@
             <p>We sell the best phone cases in PMU! Protect your device with style, durability, and a premium feel.</p>
             <a href="shop.html" class="cta-button">Shop Now</a>
         </div>
+        <!-- WhatsApp Selection Modal -->
+    <div class="modal-overlay" id="wa-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">How can we help?</h3>
+                <button class="close-btn" onclick="closeWAModal()">&times;</button>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Select a topic below to start a chat with us on WhatsApp:</p>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <button class="btn-full wa-btn" onclick="sendWAMessage('Hello, I have a general inquiry about Maruu de Shop.')">General Inquiry</button>
+                <button class="btn-full wa-btn" onclick="sendWAMessage('Hi, I want to check the stock availability for a specific phone model.')">Check Stock Availability</button>
+                <button class="btn-full wa-btn" onclick="sendWAMessage('Hello, I need help tracking or updating my recent order.')">Order Support</button>
+            </div>
+        </div>
+    </div>
     </header>
 
     <!-- Dynamic Featured Products Section -->
@@ -109,6 +135,22 @@
                 grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No featured products at the moment.</p>';
             }
         });
+
+        // WhatsApp Modal Functions
+        window.openWAModal = function() {
+            document.getElementById('wa-modal').classList.add('active');
+        }
+
+        window.closeWAModal = function() {
+            document.getElementById('wa-modal').classList.remove('active');
+        }
+
+        window.sendWAMessage = function(message) {
+            const phone = "601112023015";
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+            closeWAModal();
+        }
     </script>
 </body>
 </html>
