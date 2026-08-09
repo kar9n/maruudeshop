@@ -93,8 +93,8 @@
                         <li><code>OlderModels</code></li>
                     </ul>
 
-                    <h4 style="font-size: 1rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem;">Image Upload</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-dark);">Simply pick a photo straight from your phone's gallery. The system will automatically resize and compress it for fast loading!</p>
+                    <h4 style="font-size: 1rem; margin-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem;">Accidental Checkout?</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-dark);">If a customer accidentally checks out, just click the green <strong>Restock</strong> button on that product's card below to instantly add stock back!</p>
                 </div>
 
             </div>
@@ -171,7 +171,7 @@
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 800; // Max width for crisp mobile view
+                    const MAX_WIDTH = 800; 
                     const MAX_HEIGHT = 1000;
                     let width = img.width;
                     let height = img.height;
@@ -193,13 +193,9 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Compress to JPEG with 0.75 quality (~75% reduction in size)
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
-                    
-                    // Store compressed string into hidden input
                     document.getElementById('p-image-data').value = dataUrl;
                     
-                    // Show Preview
                     document.getElementById('image-preview-container').style.display = 'block';
                     document.getElementById('preview-img').src = dataUrl;
                 }
@@ -221,7 +217,6 @@
             
             let image = document.getElementById('p-image-data').value;
             
-            // If editing and no new image was picked, retain the old image link from global data
             if (!image && window.adminProductsData[id]) {
                 image = window.adminProductsData[id].image;
             }
@@ -271,12 +266,31 @@
                             <button onclick="toggleFeature('${prodId}')" style="flex: 1; min-width: 100%; background:${data.featured ? '#f59e0b' : '#e5e7eb'}; color:${data.featured ? 'white' : '#374151'}; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer; transition: all 0.2s;" title="Toggle Featured">
                                 ${data.featured ? '★ Featured on Home' : '☆ Pin to Home'}
                             </button>
+                            <button onclick="quickRestock('${prodId}')" style="flex: 1; background:#10b981; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;" title="Add Stock Back">Restock</button>
                             <button onclick="editProduct('${prodId}')" style="flex: 1; background:#3b82f6; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;">Edit</button>
                             <button onclick="deleteProduct('${prodId}')" style="flex: 1; background:#ef4444; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;">Delete</button>
                         </div>
                     </div>
                 `;
             });
+        }
+
+        // Quick Restock Function for Accidental Checkouts
+        window.quickRestock = async function(id) {
+            const data = window.adminProductsData[id];
+            const addQty = prompt(`How many units do you want to add back to "${data.name}"?`, "1");
+            
+            if (addQty !== null && !isNaN(addQty) && addQty.trim() !== "") {
+                const newStock = Number(data.stock) + Number(addQty);
+                try {
+                    await updateDoc(doc(db, "products", id), { stock: newStock });
+                    alert(`Successfully restocked! New stock count: ${newStock}`);
+                    loadAdminProducts();
+                } catch (error) {
+                    console.error("Restock failed:", error);
+                    alert("Failed to update stock in database.");
+                }
+            }
         }
 
         window.toggleFeature = async function(id) {
