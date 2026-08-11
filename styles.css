@@ -273,10 +273,20 @@ grid-template-columns: repeat(3, 1fr);
 
 .product-image {
     width: 100%;
-    height: 320px; /* Made taller and portrait-shaped to fit phone cases perfectly */
+    height: 320px; 
     object-fit: cover;
     background-color: #f3f4f6;
     transition: opacity 0.2s ease;
+    
+    /* NEW: Prevents image dragging and selecting */
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 .product-image:hover {

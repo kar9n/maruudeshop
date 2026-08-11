@@ -211,7 +211,8 @@
                     const isSoldOut = data.stock <= 0;
                     grid.innerHTML += `
                         <div class="product-card ${isSoldOut ? 'sold-out' : ''}" id="product-${id}">
-                            <img src="${data.image}" alt="${data.name}" class="product-image" loading="lazy">
+                            <!-- ADDED oncontextmenu and draggable attributes here -->
+                            <img src="${data.image}" alt="${data.name}" class="product-image" loading="lazy" oncontextmenu="return false;" draggable="false">
                             <div class="product-info">
                                 <h3 class="product-title">${data.name}</h3>
                                 <p class="product-description">${data.description}</p>

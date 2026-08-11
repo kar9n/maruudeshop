@@ -113,9 +113,10 @@
                     hasFeatured = true;
                     grid.innerHTML += `
                         <div class="product-card">
-                            <img src="${data.image}" alt="${data.name}" class="product-image" loading="lazy">
+                            <!-- ADDED oncontextmenu and draggable attributes here -->
+                            <img src="${data.image}" alt="${data.name}" class="product-image" loading="lazy" oncontextmenu="return false;" draggable="false">
                             <div class="product-info">
-                                <h3 class="product-title">${data.name}</h3>
+                                <h3 class="product-title">${data.name}</h3>s
                                 <p class="product-description">${data.description}</p>
                                 <div class="product-footer">
                                     <span class="product-price">RM${parseFloat(data.price).toFixed(2)}</span>
