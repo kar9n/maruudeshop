@@ -149,6 +149,7 @@
         const allowedEmail = "georgeschan93@gmail.com";
 
         window.adminProductsData = {};
+        window.isFetchingProducts = false; // Safeguard to prevent double-downloading
 
         const loginBtn = document.getElementById('google-login-btn');
         const loginSection = document.getElementById('login-section');
@@ -172,7 +173,7 @@
             if (user && user.email === allowedEmail) {
                 loginSection.style.display = 'none';
                 adminDashboard.style.display = 'block';
-                // Wait for products to load FIRST so we can use their images in the orders list
+                // Load products on start
                 loadAdminProducts().then(() => {
                     loadCustomerOrders();
                 });
@@ -183,7 +184,7 @@
         });
 
         // Tab Switcher Function
-        window.switchAdminTab = function(tab) {
+        window.switchAdminTab = async function(tab) {
             const prodSec = document.getElementById('section-products');
             const ordSec = document.getElementById('section-orders');
             const prodBtn = document.getElementById('tab-products-btn');
@@ -207,7 +208,14 @@
                 prodBtn.style.backgroundColor = '#f3f4f6';
                 prodBtn.style.color = 'var(--text-muted)';
                 prodBtn.style.border = '1px solid var(--border-color)';
-                loadCustomerOrders(); // Refresh orders when switching tab
+                
+                // RACE CONDITION FIX: If a user clicks the tab before images are downloaded, wait for them!
+                if (Object.keys(window.adminProductsData).length === 0) {
+                    document.getElementById('admin-order-list').innerHTML = '<p style="text-align: center; color: var(--primary-color); font-weight: 600;">Syncing product images... Please wait.</p>';
+                    await loadAdminProducts(); 
+                }
+
+                loadCustomerOrders();
             }
         }
 
@@ -280,7 +288,7 @@
                 });
             } catch (error) {
                 console.error("Error loading orders:", error);
-                listEl.innerHTML = '<p style="text-align: center; color: #ef4444;">Failed to load orders.</p>';
+                listEl.innerHTML = '<p style="text-align: center; color: #ef4444;">Failed to load orders. Please refresh the page.</p>';
             }
         }
 
@@ -370,45 +378,56 @@
         });
 
         async function loadAdminProducts() {
-            const listEl = document.getElementById('admin-product-list');
-            listEl.innerHTML = '<p>Loading database...</p>';
-            
-            const querySnapshot = await getDocs(collection(db, "products"));
-            
-            listEl.innerHTML = '';
-            window.adminProductsData = {};
+            // Safeguard: Prevent double-downloading if network is slow
+            if (window.isFetchingProducts) return;
+            window.isFetchingProducts = true;
 
-            querySnapshot.forEach((documentSnapshot) => {
-                const prodId = documentSnapshot.id;
-                const data = documentSnapshot.data();
+            const listEl = document.getElementById('admin-product-list');
+            listEl.innerHTML = '<p style="color: var(--primary-color); font-weight: 600;">Downloading product database...</p>';
+            
+            try {
+                const querySnapshot = await getDocs(collection(db, "products"));
                 
-                window.adminProductsData[prodId] = data;
-                
-                listEl.innerHTML += `
-                    <div class="product-card" style="display:flex; flex-direction:column; justify-content:space-between;">
-                        <div>
-                            <img src="${data.image}" alt="${data.name}" class="product-image" loading="lazy">
-                            <div class="product-info">
-                                <h3 class="product-title">${data.name}</h3>
-                                <p class="product-description" style="font-size: 0.8rem; color: #888;">Category: ${data.category} | ID: ${prodId}</p>
-                                <div style="margin-top: 0.5rem; margin-bottom: 1rem;">
-                                    <span class="product-price" style="display:block; font-size:1rem;">RM${parseFloat(data.price).toFixed(2)}</span>
-                                    <span style="font-size:0.85rem; font-weight:600; color: ${data.stock > 0 ? 'var(--primary-color)' : '#ef4444'};">Stock: ${data.stock}</span>
+                listEl.innerHTML = '';
+                window.adminProductsData = {};
+
+                querySnapshot.forEach((documentSnapshot) => {
+                    const prodId = documentSnapshot.id;
+                    const data = documentSnapshot.data();
+                    
+                    window.adminProductsData[prodId] = data;
+                    
+                    listEl.innerHTML += `
+                        <div class="product-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+                            <div>
+                                <img src="${data.image}" alt="${data.name}" class="product-image" loading="lazy">
+                                <div class="product-info">
+                                    <h3 class="product-title">${data.name}</h3>
+                                    <p class="product-description" style="font-size: 0.8rem; color: #888;">Category: ${data.category} | ID: ${prodId}</p>
+                                    <div style="margin-top: 0.5rem; margin-bottom: 1rem;">
+                                        <span class="product-price" style="display:block; font-size:1rem;">RM${parseFloat(data.price).toFixed(2)}</span>
+                                        <span style="font-size:0.85rem; font-weight:600; color: ${data.stock > 0 ? 'var(--primary-color)' : '#ef4444'};">Stock: ${data.stock}</span>
+                                    </div>
                                 </div>
                             </div>
+                            
+                            <div class="product-info" style="padding-top: 0; display:flex; flex-wrap: wrap; gap:0.5rem;">
+                                <button onclick="toggleFeature('${prodId}')" style="flex: 1; min-width: 100%; background:${data.featured ? '#f59e0b' : '#e5e7eb'}; color:${data.featured ? 'white' : '#374151'}; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;" title="Toggle Featured">
+                                    ${data.featured ? '★ Featured on Home' : '☆ Pin to Home'}
+                                </button>
+                                <button onclick="quickRestock('${prodId}')" style="flex: 1; background:#10b981; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;">Restock</button>
+                                <button onclick="editProduct('${prodId}')" style="flex: 1; background:#3b82f6; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;">Edit</button>
+                                <button onclick="deleteProduct('${prodId}')" style="flex: 1; background:#ef4444; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;">Delete</button>
+                            </div>
                         </div>
-                        
-                        <div class="product-info" style="padding-top: 0; display:flex; flex-wrap: wrap; gap:0.5rem;">
-                            <button onclick="toggleFeature('${prodId}')" style="flex: 1; min-width: 100%; background:${data.featured ? '#f59e0b' : '#e5e7eb'}; color:${data.featured ? 'white' : '#374151'}; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;" title="Toggle Featured">
-                                ${data.featured ? '★ Featured on Home' : '☆ Pin to Home'}
-                            </button>
-                            <button onclick="quickRestock('${prodId}')" style="flex: 1; background:#10b981; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;">Restock</button>
-                            <button onclick="editProduct('${prodId}')" style="flex: 1; background:#3b82f6; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;">Edit</button>
-                            <button onclick="deleteProduct('${prodId}')" style="flex: 1; background:#ef4444; color:white; border:none; padding:0.5rem 1rem; border-radius:6px; font-weight:bold; cursor:pointer;">Delete</button>
-                        </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            } catch (error) {
+                console.error("Error downloading products:", error);
+                listEl.innerHTML = '<p style="color: #ef4444;">Failed to load products. Check your internet connection.</p>';
+            } finally {
+                window.isFetchingProducts = false;
+            }
         }
 
         window.quickRestock = async function(id) {
