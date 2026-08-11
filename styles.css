@@ -29,6 +29,11 @@ position: relative;
 /* ========================================= /
 / NAVIGATION                                /
 / ========================================= */
+/* Hide mobile navbar on desktop by default */
+.mobile-navbar {
+    display: none;
+}
+
 .navbar, .mobile-navbar {
 background-color: var(--white);
 box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -342,9 +347,52 @@ margin-top: 4rem;
 / RESPONSIVE & MOBILE OPTIMIZATIONS         /
 / ========================================= */
 @media (max-width: 768px) {
+    /* Hide the desktop navbar */
+    .navbar {
+        display: none;
+    }
+    
+    /* Show the mobile navbar */
+    .mobile-navbar {
+        display: block;
+    }
+
     .nav-link {
         display: none;
     }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    /* Category tab pills: 2 columns */
+    .tab-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        padding: 0 0.5rem;
+    }
+    
+    .tab-button {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+        width: 100%;
+    }
+}@media (max-width: 768px) {
+    /* Hide the desktop navbar */
+    .navbar {
+        display: none;
+    }
+    
+    /* Show the mobile navbar */
+    .mobile-navbar {
+        display: block;
+    }
+
+    .nav-link {
+        display: none;
+    }
+    
     .hero h1 {
         font-size: 2.5rem;
     }
