@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Us - Maruu de' Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Navigation Menu -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Maruu de' Shop</a>
+            <div class="nav-link">
+                <a href="index.html">Home</a>
+                <a href="shop.html" class="btn-primary">Browse Products</a>
+                <a href="about.html">About Us</a>
+                <a href="admin.html" class="btn-secondary">Admin Portal</a>
+            </div>
+        </div>
+    </nav>
+
+    <nav class="mobile-navbar">
+        <div class="mobile-nav-container">
+                <a href="index.html">Home</a>
+                <a href="shop.html" class="btn-primary">Browse Products</a>
+                <a href="about.html">About Us</a>
+                <a href="admin.html" class="btn-secondary">Admin Portal</a>
+        </div>
+    </nav>
+
+    <nav class="contact-navbar">
+        <div class="contact-info" style="width: 100%;">
+            <span style="color: var(--text-muted);">Contact Us:</span>
+            <a href="javascript:void(0)" onclick="openWAModal()" rel="noopener noreferrer">
+                <i class="fa fa-whatsapp" style="color: #25D366; font-size: 1.8rem;"></i>
+            </a>
+        </div>
+   </nav>
+
+    <!-- Donation Content -->
+    <main class="page-container">
+        <h2 style="text-align: center;"><i class="fa fa-coffee" style="color: #f59e0b; margin-right: 10px;"></i>Buy Me a Coffee</h2>
+        
+        <p style="text-align: center; font-size: 1.1rem; color: var(--text-dark); max-width: 600px; margin: 0 auto;">
+            Hi, I'm Georges. I built and run Maruu de' Shop entirely on my own while balancing my full-time Information Technology studies. 
+        </p>
+
+        <p style="text-align: center; margin-top: 1.5rem; color: var(--text-muted);">
+            Between coding the website, managing database servers, and handling customer service, this shop is a one-man show fueled entirely by passion (and a lot of caffeine). Late nights, endless debugging, and balancing academic projects are my everyday reality.
+        </p>
+        
+        <p style="text-align: center; margin-top: 1rem; color: var(--text-muted);">
+            If my shop, code, or service has helped you, or if you simply want to support a local IT student hustling to make things work, any contribution to my coffee fund is deeply appreciated. It directly helps pay for database hosting costs, college expenses, and keeps me awake during those late-night coding sessions!
+        </p>
+
+        <div class="qr-box">
+            <p style="font-weight: 700; color: var(--text-dark); margin-bottom: 1rem;">Support via GXBank / DuitNow QR</p>
+            <img src="image_abe11a.png" alt="GXBank Donation QR Code">
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">Georges Chan Teck Chiang • GX Account</p>
+        </div>
+        
+        <p style="text-align: center; font-weight: 600; color: var(--primary-color);">Thank you for supporting small, student-run businesses!</p>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2026 Maruu de' Shop. Serving PMU locally.
+    </footer>
+
+    <!-- WhatsApp Selection Modal -->
+    <div class="modal-overlay" id="wa-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">How can we help?</h3>
+                <button class="close-btn" onclick="closeWAModal()">&times;</button>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Select a topic below to start a chat with us on WhatsApp:</p>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <button class="btn-full wa-btn" onclick="sendWAMessage('Hello, I have a general inquiry about Maruu de Shop.')">General Inquiry</button>
+                <button class="btn-full wa-btn" onclick="sendWAMessage('Hi, I want to check the stock availability for a specific phone model.')">Check Stock Availability</button>
+                <button class="btn-full wa-btn" onclick="sendWAMessage('Hello, I need help tracking or updating my recent order.')">Order Support</button>
+                <button class="btn-full wa-btn" onclick="sendWAMessage('Hi, I am interested in requesting a custom case or a bulk order.')">Custom / Bulk Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script for WhatsApp Modal -->
+    <script>
+        window.openWAModal = function() {
+            document.getElementById('wa-modal').classList.add('active');
+        }
+
+        window.closeWAModal = function() {
+            document.getElementById('wa-modal').classList.remove('active');
+        }
+
+        window.sendWAMessage = function(message) {
+            const phone = "601112023015";
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+            closeWAModal();
+        }
+    </script>
+</body>
+</html>

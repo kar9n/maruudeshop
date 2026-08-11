@@ -17,6 +17,7 @@
             <div class="nav-link">
                 <a href="index.html" style="color: var(--primary-color);">Home</a>
                 <a href="shop.html" class="btn-primary">Browse Products</a>
+                <a href="about.html">About Us</a>
                 <a href="admin.html" class="btn-secondary">Admin Portal</a>
             </div>
         </div>
@@ -26,11 +27,14 @@
         <div class="mobile-nav-container">
                 <a href="index.html" style="color: var(--primary-color);">Home</a>
                 <a href="shop.html" class="btn-primary">Browse Products</a>
+                <a href="about.html">About Us</a>
                 <a href="admin.html" class="btn-secondary">Admin Portal</a>
         </div>
     </nav>
     
+    <!-- Top Contact & Support Bar -->
     <nav class="contact-navbar">
+        <a href="donate.html" class="support-btn"><i class="fa fa-coffee"></i> Buy me a coffee</a>
         <div class="contact-info">
             <span style="color: var(--text-muted);">Contact Us:</span>
             <a href="javascript:void(0)" onclick="openWAModal()" rel="noopener noreferrer">
@@ -84,7 +88,7 @@
     <!-- Firebase SDK & Script Logic for Homepage -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDQ7T8Lz1CtbJOgGp-DX5HtmQY814lWQ6U",
@@ -113,10 +117,9 @@
                     hasFeatured = true;
                     grid.innerHTML += `
                         <div class="product-card">
-                            <!-- ADDED oncontextmenu and draggable attributes here -->
                             <img src="${data.image}" alt="${data.name}" class="product-image" loading="lazy" oncontextmenu="return false;" draggable="false">
                             <div class="product-info">
-                                <h3 class="product-title">${data.name}</h3>s
+                                <h3 class="product-title">${data.name}</h3>
                                 <p class="product-description">${data.description}</p>
                                 <div class="product-footer">
                                     <span class="product-price">RM${parseFloat(data.price).toFixed(2)}</span>

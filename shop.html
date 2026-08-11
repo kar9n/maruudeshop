@@ -17,6 +17,7 @@
             <div class="nav-link">
                 <a href="index.html">Home</a>
                 <a href="shop.html" class="btn-primary" style="color: #fff;">Browse Products</a>
+                <a href="about.html">About Us</a>
                 <a href="admin.html" class="btn-secondary">Admin Portal</a>
             </div>
         </div>
@@ -26,11 +27,14 @@
         <div class="mobile-nav-container">
                 <a href="index.html">Home</a>
                 <a href="shop.html" class="btn-primary">Browse Products</a>
+                <a href="about.html">About Us</a>
                 <a href="admin.html" class="btn-secondary">Admin Portal</a>
         </div>
     </nav>
 
+    <!-- Top Contact & Support Bar -->
     <nav class="contact-navbar">
+        <a href="donate.html" class="support-btn"><i class="fa fa-coffee"></i> Buy me a coffee</a>
         <div class="contact-info">
             <span style="color: var(--text-muted);">Contact Us:</span>
             <a href="javascript:void(0)" onclick="openWAModal()" rel="noopener noreferrer">
@@ -52,56 +56,42 @@
             <button class="tab-button" onclick="openModel(event, 'iPhone13')">iPhone 13 Series</button>
             <button class="tab-button" onclick="openModel(event, 'OlderModels')">Older Models</button>
         </div>
-
-        <!-- Dynamic Tab Contents -->
         
         <!-- Tab Content: iPhone 17 -->
         <div id="iPhone17" class="tab-content" style="display: block;">
             <h3 class="model-subtitle">iPhone 17 / 17 Pro / 17 Pro Max / 17 Air</h3>
-            <div class="product-grid" id="grid-iPhone17">
-                <!-- Data injected by Firebase -->
-            </div>
+            <div class="product-grid" id="grid-iPhone17"></div>
         </div>
 
         <!-- Tab Content: iPhone 16 -->
         <div id="iPhone16" class="tab-content">
             <h3 class="model-subtitle">iPhone 16 / 16 Plus / 16 Pro / 16 Pro Max</h3>
-            <div class="product-grid" id="grid-iPhone16">
-                <!-- Data injected by Firebase -->
-            </div>
+            <div class="product-grid" id="grid-iPhone16"></div>
         </div>
 
         <!-- Tab Content: iPhone 15 -->
         <div id="iPhone15" class="tab-content">
             <h3 class="model-subtitle">iPhone 15 / 15 Plus / 15 Pro / 15 Pro Max</h3>
-            <div class="product-grid" id="grid-iPhone15">
-                <!-- Data injected by Firebase -->
-            </div>
+            <div class="product-grid" id="grid-iPhone15"></div>
         </div>
 
         <!-- Tab Content: iPhone 14 -->
         <div id="iPhone14" class="tab-content">
             <h3 class="model-subtitle">iPhone 14 / 14 Plus / 14 Pro / 14 Pro Max</h3>
-            <div class="product-grid" id="grid-iPhone14">
-                <!-- Data injected by Firebase -->
-            </div>
+            <div class="product-grid" id="grid-iPhone14"></div>
         </div>
 
         <!-- Tab Content: iPhone 13 -->
         <div id="iPhone13" class="tab-content">
             <h3 class="model-subtitle">iPhone 13 / 13 mini / 13 Pro / 13 Pro Max</h3>
-            <div class="product-grid" id="grid-iPhone13">
-                <!-- Data injected by Firebase -->
-            </div>
+            <div class="product-grid" id="grid-iPhone13"></div>
         </div>
         
         <!-- Tab Content: Older Models -->
         <div id="OlderModels" class="tab-content">
             <h3 class="model-subtitle">iPhone 12 / 11 / X / 8 / 7 / 6</h3>
             <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">Please contact us directly for availability on older models.</p>
-            <div class="product-grid" id="grid-OlderModels">
-                <!-- Data injected by Firebase -->
-            </div>
+            <div class="product-grid" id="grid-OlderModels"></div>
         </div>
 
     </main>
@@ -126,9 +116,7 @@
                 <h3 class="modal-title">Your Cart</h3>
                 <button class="close-btn" onclick="closeCart()">&times;</button>
             </div>
-            <div id="cart-items">
-                <!-- Items dynamically injected here -->
-            </div>
+            <div id="cart-items"></div>
             <div class="cart-total">
                 <span>Total:</span>
                 <span id="cart-total-price">RM0.00</span>
@@ -137,13 +125,20 @@
         </div>
     </div>
 
-    <!-- Checkout Modal -->
+    <!-- Checkout Modal with QR -->
     <div class="modal-overlay" id="checkout-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Checkout Details</h3>
+                <h3 class="modal-title">Complete Your Order</h3>
                 <button class="close-btn" onclick="closeCheckout()">&times;</button>
             </div>
+            
+            <div class="qr-box" style="margin-top: 0; padding: 1rem;">
+                <p style="font-size: 0.85rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.5rem;">Pay via DuitNow / GXBank</p>
+                <img src="image_abe11a.png" alt="DuitNow QR Code" style="width: 140px; margin: 0 auto; border: 1px solid #e5e7eb;">
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; line-height: 1.4;">Scan to pay <strong id="checkout-total-display">RM0.00</strong>. Please screenshot your successful payment receipt.</p>
+            </div>
+
             <div class="form-group">
                 <label for="buyer-name">Your Full Name</label>
                 <input type="text" id="buyer-name" placeholder="Enter your name" required>
@@ -152,7 +147,7 @@
                 <label for="pickup-location">Pickup Location (in PMU)</label>
                 <input type="text" id="pickup-location" placeholder="e.g. Block A Lobby" required>
             </div>
-            <button class="btn-full" onclick="submitCheckout()">Confirm & WhatsApp</button>
+            <button class="btn-full" onclick="submitCheckout()">I Have Paid & Send Receipt</button>
         </div>
     </div>
 
@@ -173,7 +168,6 @@
         </div>
     </div>
 
-    <!-- Toast Notification -->
     <div class="toast" id="toast">Added to cart!</div>
 
     <!-- Firebase SDK & Script Logic -->
@@ -211,7 +205,6 @@
                     const isSoldOut = data.stock <= 0;
                     grid.innerHTML += `
                         <div class="product-card ${isSoldOut ? 'sold-out' : ''}" id="product-${id}">
-                            <!-- ADDED oncontextmenu and draggable attributes here -->
                             <img src="${data.image}" alt="${data.name}" class="product-image" loading="lazy" oncontextmenu="return false;" draggable="false">
                             <div class="product-info">
                                 <h3 class="product-title">${data.name}</h3>
@@ -323,6 +316,11 @@
         }
 
         window.proceedToCheckout = function() {
+            let total = 0;
+            for (const item of Object.values(window.cart)) {
+                total += item.price * item.qty;
+            }
+            document.getElementById('checkout-total-display').textContent = `RM${total.toFixed(2)}`;
             closeCart();
             document.getElementById('checkout-modal').classList.add('active');
         }
@@ -360,21 +358,20 @@
                     qty: item.qty
                 });
 
-                // Deduct stock
                 window.stockState[id] -= item.qty; 
                 const newStock = Math.max(0, window.stockState[id]);
 
                 try {
                     await updateDoc(doc(db, "products", id), { stock: newStock });
                 } catch (error) {
-                    console.error("Failed to update stock in database:", error);
+                    console.error("Failed to update stock:", error);
                 }
             }
             
-            message += `\n*Total Amount:* RM${total.toFixed(2)}\n\n`;
+            message += `\n*Total Amount:* RM${total.toFixed(2)}\n`;
+            message += `*Payment:* Paid via QR. (I will attach the receipt shortly!)\n\n`;
             message += `Please confirm my order. Thank you!`;
 
-            // SAVE ORDER TO FIREBASE FOR ADMIN PANEL
             try {
                 await addDoc(collection(db, "orders"), {
                     buyerName: name,

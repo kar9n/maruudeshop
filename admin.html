@@ -14,6 +14,7 @@
             <div class="nav-link">
                 <a href="index.html">Home</a>
                 <a href="shop.html" class="btn-primary">Browse Products</a>
+                <a href="about.html">About Us</a>
                 <a href="admin.html" class="btn-secondary" style="color: var(--primary-color);">Admin Portal</a>
             </div>
         </div>
@@ -23,23 +24,25 @@
         <div class="mobile-nav-container">
                 <a href="index.html">Home</a>
                 <a href="shop.html" class="btn-primary">Browse Products</a>
+                <a href="about.html">About Us</a>
                 <a href="admin.html" class="btn-secondary" style="color: var(--primary-color);">Admin Portal</a>
         </div>
+    </nav>
+
+    <nav class="contact-navbar">
+        <a href="donate.html" class="support-btn"><i class="fa fa-coffee"></i> Buy me a coffee</a>
     </nav>
 
     <main class="shop-section">
         <h2 class="section-title">Admin Portal</h2>
         
-        <!-- Login Section -->
         <div id="login-section" style="text-align: center; margin-top: 3rem;">
             <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Restricted Access: Authorized Personnel Only.</p>
             <button id="google-login-btn" class="btn-full" style="max-width: 300px; margin: 0 auto; display: block;">Login with Google</button>
         </div>
 
-        <!-- Admin Dashboard (Hidden by default) -->
         <div id="admin-dashboard" style="display: none;">
             
-            <!-- Admin Navigation Tabs -->
             <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem;">
                 <button onclick="switchAdminTab('products')" id="tab-products-btn" style="background-color: var(--primary-color); color: white; border: none; padding: 0.75rem 2rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Manage Products</button>
                 <button onclick="switchAdminTab('orders')" id="tab-orders-btn" style="background-color: #f3f4f6; color: var(--text-muted); border: 1px solid var(--border-color); padding: 0.75rem 2rem; border-radius: 50px; font-weight: 600; cursor: pointer;">Customer Orders</button>
@@ -149,7 +152,7 @@
         const allowedEmail = "georgeschan93@gmail.com";
 
         window.adminProductsData = {};
-        window.isFetchingProducts = false; // Safeguard to prevent double-downloading
+        window.isFetchingProducts = false; 
 
         const loginBtn = document.getElementById('google-login-btn');
         const loginSection = document.getElementById('login-section');
@@ -173,7 +176,6 @@
             if (user && user.email === allowedEmail) {
                 loginSection.style.display = 'none';
                 adminDashboard.style.display = 'block';
-                // Load products on start
                 loadAdminProducts().then(() => {
                     loadCustomerOrders();
                 });
@@ -209,7 +211,6 @@
                 prodBtn.style.color = 'var(--text-muted)';
                 prodBtn.style.border = '1px solid var(--border-color)';
                 
-                // RACE CONDITION FIX: If a user clicks the tab before images are downloaded, wait for them!
                 if (Object.keys(window.adminProductsData).length === 0) {
                     document.getElementById('admin-order-list').innerHTML = '<p style="text-align: center; color: var(--primary-color); font-weight: 600;">Syncing product images... Please wait.</p>';
                     await loadAdminProducts(); 
@@ -251,7 +252,6 @@
                     let itemsHtml = '';
                     if (order.items && Array.isArray(order.items)) {
                         order.items.forEach(item => {
-                            // Cross-reference the image locally using the product ID
                             const productData = window.adminProductsData[item.productId];
                             const itemImg = productData ? productData.image : '';
 
@@ -378,7 +378,6 @@
         });
 
         async function loadAdminProducts() {
-            // Safeguard: Prevent double-downloading if network is slow
             if (window.isFetchingProducts) return;
             window.isFetchingProducts = true;
 
