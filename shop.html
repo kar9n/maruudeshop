@@ -179,7 +179,7 @@
     <!-- Firebase SDK & Script Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDQ7T8Lz1CtbJOgGp-DX5HtmQY814lWQ6U",
@@ -346,15 +346,23 @@
             message += `*Order Details:*\n`;
             
             let total = 0;
+            let orderItemsSummary = [];
+
             for (const [id, item] of Object.entries(window.cart)) {
                 message += `- ${item.qty}x ${item.name} (RM${(item.price * item.qty).toFixed(2)})\n`;
                 total += item.price * item.qty;
                 
-                // Calculate new stock count
+                orderItemsSummary.push({
+                    productId: id,
+                    name: item.name,
+                    price: item.price,
+                    qty: item.qty
+                });
+
+                // Deduct stock
                 window.stockState[id] -= item.qty; 
                 const newStock = Math.max(0, window.stockState[id]);
 
-                // PERSIST TO FIREBASE: Updates the database permanently
                 try {
                     await updateDoc(doc(db, "products", id), { stock: newStock });
                 } catch (error) {
@@ -364,6 +372,19 @@
             
             message += `\n*Total Amount:* RM${total.toFixed(2)}\n\n`;
             message += `Please confirm my order. Thank you!`;
+
+            // SAVE ORDER TO FIREBASE FOR ADMIN PANEL
+            try {
+                await addDoc(collection(db, "orders"), {
+                    buyerName: name,
+                    pickupLocation: location,
+                    items: orderItemsSummary,
+                    totalAmount: total,
+                    createdAt: serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Failed to save order record:", error);
+            }
 
             const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
             window.open(url, '_blank');
