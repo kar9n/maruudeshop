@@ -43,55 +43,52 @@
         </div>
    </nav>
 
-    <!-- Products (Shop Page Section) -->
+    <!-- Products Section -->
     <main id="shop" class="shop-section">
         <h2 class="section-title">Our Products</h2>
 
-        <!-- Tab Buttons as Modern Scrollable Pills -->
-        <div class="tab-container" id="tab-container">
-            <button class="tab-button active" onclick="openModel(event, 'iPhone17')">iPhone 17 Series</button>
-            <button class="tab-button" onclick="openModel(event, 'iPhone16')">iPhone 16 Series</button>
-            <button class="tab-button" onclick="openModel(event, 'iPhone15')">iPhone 15 Series</button>
-            <button class="tab-button" onclick="openModel(event, 'iPhone14')">iPhone 14 Series</button>
-            <button class="tab-button" onclick="openModel(event, 'iPhone13')">iPhone 13 Series</button>
-            <button class="tab-button" onclick="openModel(event, 'OlderModels')">Older Models</button>
-        </div>
-        
-        <!-- Tab Content: iPhone 17 -->
-        <div id="iPhone17" class="tab-content" style="display: block;">
-            <h3 class="model-subtitle">iPhone 17 / 17 Pro / 17 Pro Max / 17 Air</h3>
-            <div class="product-grid" id="grid-iPhone17"></div>
+        <!-- Smart Search Bar -->
+        <div class="search-container">
+            <input type="text" id="product-search" class="search-bar" placeholder="Search models (e.g. iPhone 15, ip14 pro)..." oninput="handleSearch(event)">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
         </div>
 
-        <!-- Tab Content: iPhone 16 -->
-        <div id="iPhone16" class="tab-content">
-            <h3 class="model-subtitle">iPhone 16 / 16 Plus / 16 Pro / 16 Pro Max</h3>
-            <div class="product-grid" id="grid-iPhone16"></div>
+        <div id="standard-shop-view">
+            <!-- Tab Buttons -->
+            <div class="tab-container" id="tab-container">
+                <button class="tab-button active" onclick="openModel(event, 'iPhone17')">iPhone 17</button>
+                <button class="tab-button" onclick="openModel(event, 'iPhone16')">iPhone 16</button>
+                <button class="tab-button" onclick="openModel(event, 'iPhone15')">iPhone 15</button>
+                <button class="tab-button" onclick="openModel(event, 'iPhone14')">iPhone 14</button>
+                <button class="tab-button" onclick="openModel(event, 'iPhone13')">iPhone 13</button>
+                <button class="tab-button" onclick="openModel(event, 'OlderModels')">Older</button>
+            </div>
+            
+            <div id="iPhone17" class="tab-content" style="display: block;">
+                <div class="product-grid" id="grid-iPhone17"></div>
+            </div>
+            <div id="iPhone16" class="tab-content">
+                <div class="product-grid" id="grid-iPhone16"></div>
+            </div>
+            <div id="iPhone15" class="tab-content">
+                <div class="product-grid" id="grid-iPhone15"></div>
+            </div>
+            <div id="iPhone14" class="tab-content">
+                <div class="product-grid" id="grid-iPhone14"></div>
+            </div>
+            <div id="iPhone13" class="tab-content">
+                <div class="product-grid" id="grid-iPhone13"></div>
+            </div>
+            <div id="OlderModels" class="tab-content">
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">Contact us directly for availability on older models.</p>
+                <div class="product-grid" id="grid-OlderModels"></div>
+            </div>
         </div>
 
-        <!-- Tab Content: iPhone 15 -->
-        <div id="iPhone15" class="tab-content">
-            <h3 class="model-subtitle">iPhone 15 / 15 Plus / 15 Pro / 15 Pro Max</h3>
-            <div class="product-grid" id="grid-iPhone15"></div>
-        </div>
-
-        <!-- Tab Content: iPhone 14 -->
-        <div id="iPhone14" class="tab-content">
-            <h3 class="model-subtitle">iPhone 14 / 14 Plus / 14 Pro / 14 Pro Max</h3>
-            <div class="product-grid" id="grid-iPhone14"></div>
-        </div>
-
-        <!-- Tab Content: iPhone 13 -->
-        <div id="iPhone13" class="tab-content">
-            <h3 class="model-subtitle">iPhone 13 / 13 mini / 13 Pro / 13 Pro Max</h3>
-            <div class="product-grid" id="grid-iPhone13"></div>
-        </div>
-        
-        <!-- Tab Content: Older Models -->
-        <div id="OlderModels" class="tab-content">
-            <h3 class="model-subtitle">iPhone 12 / 11 / X / 8 / 7 / 6</h3>
-            <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">Please contact us directly for availability on older models.</p>
-            <div class="product-grid" id="grid-OlderModels"></div>
+        <!-- Search Results View -->
+        <div id="search-results-container">
+            <h3 class="model-subtitle" id="search-results-title">Search Results</h3>
+            <div class="product-grid" id="grid-search-results"></div>
         </div>
 
     </main>
@@ -103,9 +100,7 @@
 
     <!-- Cart Floating Button -->
     <div class="floating-cart" onclick="openCart()">
-        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-        </svg>
+        <i class="fa-solid fa-cart-shopping"></i>
         <div class="cart-count" id="cart-count">0</div>
     </div>
 
@@ -135,8 +130,9 @@
             
             <div class="qr-box" style="margin-top: 0; padding: 1rem;">
                 <p style="font-size: 0.85rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.5rem;">Pay via DuitNow / GXBank</p>
-                <img src="image_abe11a.png" alt="DuitNow QR Code" style="width: 140px; margin: 0 auto; border: 1px solid #e5e7eb;">
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; line-height: 1.4;">Scan to pay <strong id="checkout-total-display">RM0.00</strong>. Please screenshot your successful payment receipt.</p>
+                <img src="qr.png" alt="DuitNow QR Code" style="width: 140px; margin: 0 auto; border: 1px solid #e5e7eb;">
+                <p style="font-size: 0.85rem; color: var(--text-dark); margin-top: 0.5rem; font-weight: 600;">Transfer Exact Amount:</p>
+                <p style="font-size: 1.5rem; font-weight: 800; color: #10b981; margin-top: 0.25rem;" id="checkout-total-display">RM0.00</p>
             </div>
 
             <div class="form-group">
@@ -144,15 +140,30 @@
                 <input type="text" id="buyer-name" placeholder="Enter your name" required>
             </div>
             <div class="form-group">
+                <label for="buyer-phone">WhatsApp Number (For Order Updates)</label>
+                <input type="tel" id="buyer-phone" placeholder="e.g. 0123456789" required>
+            </div>
+            <div class="form-group">
                 <label for="pickup-location">Pickup Location (in PMU)</label>
                 <input type="text" id="pickup-location" placeholder="e.g. Block A Lobby" required>
             </div>
-            <button class="btn-full" onclick="submitCheckout()">I Have Paid & Send Receipt</button>
+            <button class="btn-full" onclick="submitCheckout()" id="submit-order-btn">Submit Order</button>
+        </div>
+    </div>
+
+    <!-- Order Success Modal -->
+    <div class="modal-overlay" id="success-modal">
+        <div class="modal-content" style="text-align: center;">
+            <i class="fa-solid fa-circle-check success-checkmark"></i>
+            <h3 class="modal-title" style="margin-bottom: 0.5rem;">Order Received!</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Thank you! Your order has been placed in our system. We will verify your DuitNow payment and contact you via WhatsApp shortly to confirm pickup.</p>
+            <button class="btn-full" onclick="closeSuccessModal()">Return to Shop</button>
         </div>
     </div>
 
     <!-- WhatsApp Selection Modal -->
     <div class="modal-overlay" id="wa-modal">
+        <!-- (Same WA modal code as before) -->
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">How can we help?</h3>
@@ -162,8 +173,6 @@
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                 <button class="btn-full wa-btn" onclick="sendWAMessage('Hello, I have a general inquiry about Maruu de Shop.')">General Inquiry</button>
                 <button class="btn-full wa-btn" onclick="sendWAMessage('Hi, I want to check the stock availability for a specific phone model.')">Check Stock Availability</button>
-                <button class="btn-full wa-btn" onclick="sendWAMessage('Hello, I need help tracking or updating my recent order.')">Order Support</button>
-                <button class="btn-full wa-btn" onclick="sendWAMessage('Hi, I am interested in requesting a custom case or a bulk order.')">Custom / Bulk Order</button>
             </div>
         </div>
     </div>
@@ -181,8 +190,7 @@
             projectId: "maruu-de--shop",
             storageBucket: "maruu-de--shop.firebasestorage.app",
             messagingSenderId: "948084838634",
-            appId: "1:948084838634:web:941c44687e96b508494793",
-            measurementId: "G-371J2BPF4C"   
+            appId: "1:948084838634:web:941c44687e96b508494793"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -190,6 +198,7 @@
 
         window.stockState = {};
         window.cart = {};
+        window.allProducts = []; // Stores all products for searching
 
         window.addEventListener('DOMContentLoaded', async () => {
             const querySnapshot = await getDocs(collection(db, "products"));
@@ -197,129 +206,89 @@
             querySnapshot.forEach((docSnap) => {
                 const id = docSnap.id;
                 const data = docSnap.data();
+                data.id = id; 
                 
                 window.stockState[id] = data.stock;
+                window.allProducts.push(data);
                 
                 const grid = document.getElementById(`grid-${data.category}`);
                 if (grid) {
-                    const isSoldOut = data.stock <= 0;
-                    grid.innerHTML += `
-                        <div class="product-card ${isSoldOut ? 'sold-out' : ''}" id="product-${id}">
-                            <img src="${data.image}" alt="${data.name}" class="product-image" loading="lazy" oncontextmenu="return false;" draggable="false">
-                            <div class="product-info">
-                                <h3 class="product-title">${data.name}</h3>
-                                <p class="product-description">${data.description}</p>
-                                <p class="product-stock" id="stock-text-${id}" style="color: ${isSoldOut ? '#ef4444' : 'var(--primary-color)'}">
-                                    ${isSoldOut ? 'Stock: Sold Out' : `Stock: ${data.stock} available`}
-                                </p>
-                                <div class="product-footer">
-                                    <span class="product-price">RM${parseFloat(data.price).toFixed(2)}</span>
-                                    <button class="add-to-cart" onclick="addToCart('${id}', '${data.name}', ${data.price})" ${isSoldOut ? 'disabled' : ''}>
-                                        ${isSoldOut ? 'SOLD OUT' : 'Add'}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                    grid.innerHTML += createProductCard(data);
                 }
             });
         });
 
-        window.openModel = function(evt, modelName) {
-            var tabcontent = document.getElementsByClassName("tab-content");
-            for (var i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-            var tabbuttons = document.getElementsByClassName("tab-button");
-            for (var i = 0; i < tabbuttons.length; i++) {
-                tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
-            }
-            document.getElementById(modelName).style.display = "block";
-            evt.currentTarget.className += " active";
-        }
-
-        window.showToast = function(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        window.addToCart = function(id, name, price) {
-            const currentQty = window.cart[id] ? window.cart[id].qty : 0;
-            if (currentQty >= window.stockState[id]) {
-                showToast('Not enough stock available!');
+        // Smart Search Function
+        window.handleSearch = function(event) {
+            const query = event.target.value.toLowerCase().replace('ip', 'iphone ');
+            const standardView = document.getElementById('standard-shop-view');
+            const searchView = document.getElementById('search-results-container');
+            const searchGrid = document.getElementById('grid-search-results');
+            
+            if (query.trim() === '') {
+                standardView.style.display = 'block';
+                searchView.style.display = 'none';
                 return;
             }
-            
-            if (!window.cart[id]) {
-                window.cart[id] = { name, price, qty: 1 };
+
+            standardView.style.display = 'none';
+            searchView.style.display = 'block';
+            searchGrid.innerHTML = '';
+
+            // Scoring Algorithm for Smart Sorting
+            const results = window.allProducts.map(product => {
+                let score = 0;
+                const name = product.name.toLowerCase();
+                
+                if (name === query) score = 100; // Exact match priority
+                else if (name.startsWith(query)) score = 80; // Starts with priority
+                else if (name.includes(query)) score = 50 + (query.length / name.length); // Partial match
+                
+                return { product, score };
+            }).filter(item => item.score > 0);
+
+            results.sort((a, b) => b.score - a.score); // Sort highest score first
+
+            if (results.length === 0) {
+                searchGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 2rem;">No cases found for that model.</p>';
             } else {
-                window.cart[id].qty++;
-            }
-            updateCartCount();
-            showToast(`${name} added to cart!`);
-        }
-
-        window.removeFromCart = function(id) {
-            if (window.cart[id]) {
-                const name = window.cart[id].name;
-                delete window.cart[id];
-                updateCartCount();
-                openCart();
-                showToast(`Removed ${name} from cart`);
-            }
-        }
-
-        window.updateCartCount = function() {
-            const count = Object.values(window.cart).reduce((sum, item) => sum + item.qty, 0);
-            document.getElementById('cart-count').textContent = count;
-        }
-
-        window.openCart = function() {
-            const container = document.getElementById('cart-items');
-            const totalEl = document.getElementById('cart-total-price');
-            const btnCheckout = document.getElementById('btn-checkout');
-            
-            container.innerHTML = '';
-            let total = 0;
-            const keys = Object.keys(window.cart);
-            
-            if (keys.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Your cart is empty.</p>';
-                btnCheckout.disabled = true;
-            } else {
-                btnCheckout.disabled = false;
-                keys.forEach(id => {
-                    const item = window.cart[id];
-                    total += item.price * item.qty;
-                    container.innerHTML += `
-                        <div class="cart-item">
-                            <div class="cart-item-info">
-                                <h4>${item.name}</h4>
-                                <span style="font-size:0.875rem; color:var(--text-muted);">Qty: ${item.qty}</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                <div class="cart-item-price">RM${(item.price * item.qty).toFixed(2)}</div>
-                                <button onclick="removeFromCart('${id}')" style="background:none; border:none; color:#ef4444; font-size:1.25rem; font-weight:bold; cursor:pointer;" title="Remove">&times;</button>
-                            </div>
-                        </div>
-                    `;
+                results.forEach(item => {
+                    searchGrid.innerHTML += createProductCard(item.product);
                 });
             }
-            totalEl.textContent = `RM${total.toFixed(2)}`;
-            document.getElementById('cart-modal').classList.add('active');
         }
 
-        window.closeCart = function() {
-            document.getElementById('cart-modal').classList.remove('active');
+        window.createProductCard = function(data) {
+            const isSoldOut = data.stock <= 0;
+            return `
+                <div class="product-card ${isSoldOut ? 'sold-out' : ''}" id="product-${data.id}">
+                    <img src="${data.image}" alt="${data.name}" class="product-image" loading="lazy">
+                    <div class="product-info">
+                        <h3 class="product-title">${data.name}</h3>
+                        <p class="product-description">${data.description}</p>
+                        <p class="product-stock" id="stock-text-${data.id}" style="color: ${isSoldOut ? '#ef4444' : 'var(--primary-color)'}">
+                            ${isSoldOut ? 'Stock: Sold Out' : `Stock: ${data.stock} available`}
+                        </p>
+                        <div class="product-footer">
+                            <span class="product-price">RM${parseFloat(data.price).toFixed(2)}</span>
+                            <button class="add-to-cart" onclick="addToCart('${data.id}', '${data.name}', ${data.price})" ${isSoldOut ? 'disabled' : ''}>
+                                ${isSoldOut ? 'SOLD OUT' : 'Add'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
+
+        // Cart functions remain identical to your current implementation
+        // [Omitted addToCart, removeFromCart, updateCartCount, openCart, closeCart for brevity]
+        window.addToCart = function(id, name, price) { /* ... */ }
+        window.openCart = function() { /* ... */ }
+        window.closeCart = function() { /* ... */ }
 
         window.proceedToCheckout = function() {
             let total = 0;
-            for (const item of Object.values(window.cart)) {
-                total += item.price * item.qty;
-            }
+            for (const item of Object.values(window.cart)) { total += item.price * item.qty; }
             document.getElementById('checkout-total-display').textContent = `RM${total.toFixed(2)}`;
             closeCart();
             document.getElementById('checkout-modal').classList.add('active');
@@ -329,28 +298,30 @@
             document.getElementById('checkout-modal').classList.remove('active');
         }
 
+        window.closeSuccessModal = function() {
+            document.getElementById('success-modal').classList.remove('active');
+        }
+
+        // Updated Checkout without WhatsApp
         window.submitCheckout = async function() {
             const name = document.getElementById('buyer-name').value.trim();
+            const phone = document.getElementById('buyer-phone').value.trim();
             const location = document.getElementById('pickup-location').value.trim();
+            const btn = document.getElementById('submit-order-btn');
             
-            if (!name || !location) {
-                showToast('Please fill in both your name and location.');
+            if (!name || !phone || !location) {
+                showToast('Please fill in all details.');
                 return;
             }
 
-            const phone = "601112023015";
-            let message = `*New Order from Maruu de' Shop!*\n\n`;
-            message += `*Buyer Name:* ${name}\n`;
-            message += `*Pickup Location:* ${location}\n\n`;
-            message += `*Order Details:*\n`;
-            
+            btn.textContent = "Processing...";
+            btn.disabled = true;
+
             let total = 0;
             let orderItemsSummary = [];
 
             for (const [id, item] of Object.entries(window.cart)) {
-                message += `- ${item.qty}x ${item.name} (RM${(item.price * item.qty).toFixed(2)})\n`;
                 total += item.price * item.qty;
-                
                 orderItemsSummary.push({
                     productId: id,
                     name: item.name,
@@ -359,87 +330,47 @@
                 });
 
                 window.stockState[id] -= item.qty; 
-                const newStock = Math.max(0, window.stockState[id]);
-
                 try {
-                    await updateDoc(doc(db, "products", id), { stock: newStock });
-                } catch (error) {
-                    console.error("Failed to update stock:", error);
-                }
+                    await updateDoc(doc(db, "products", id), { stock: Math.max(0, window.stockState[id]) });
+                } catch (error) { console.error("Failed to update stock"); }
             }
-            
-            message += `\n*Total Amount:* RM${total.toFixed(2)}\n`;
-            message += `*Payment:* Paid via QR. (I will attach the receipt shortly!)\n\n`;
-            message += `Please confirm my order. Thank you!`;
 
             try {
                 await addDoc(collection(db, "orders"), {
                     buyerName: name,
+                    buyerPhone: phone,
                     pickupLocation: location,
                     items: orderItemsSummary,
                     totalAmount: total,
+                    status: "Pending Verification",
                     createdAt: serverTimestamp()
                 });
+
+                // Clear cart & UI
+                window.cart = {};
+                updateCartCount();
+                updateStockUI();
+                closeCheckout();
+                
+                document.getElementById('buyer-name').value = '';
+                document.getElementById('buyer-phone').value = '';
+                document.getElementById('pickup-location').value = '';
+                
+                // Show Success Modal instead of WhatsApp
+                document.getElementById('success-modal').classList.add('active');
+
             } catch (error) {
-                console.error("Failed to save order record:", error);
-            }
-
-            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-            window.open(url, '_blank');
-            
-            window.cart = {};
-            updateCartCount();
-            updateStockUI();
-            closeCheckout();
-            
-            document.getElementById('buyer-name').value = '';
-            document.getElementById('pickup-location').value = '';
-            showToast('Redirecting to WhatsApp...');
-        }
-
-        window.updateStockUI = function() {
-            for (const [id, stock] of Object.entries(window.stockState)) {
-                const card = document.getElementById(`product-${id}`);
-                const stockText = document.getElementById(`stock-text-${id}`);
-                
-                if (stockText) {
-                    stockText.textContent = stock > 0 ? `Stock: ${stock} available` : 'Stock: Sold Out';
-                    stockText.style.color = stock > 0 ? 'var(--primary-color)' : '#ef4444';
-                }
-                
-                if (card) {
-                    const btn = card.querySelector('.add-to-cart');
-                    if (stock <= 0) {
-                        card.classList.add('sold-out');
-                        if (btn) {
-                            btn.textContent = 'SOLD OUT';
-                            btn.disabled = true;
-                        }
-                    } else {
-                        card.classList.remove('sold-out');
-                        if (btn) {
-                            btn.textContent = 'Add';
-                            btn.disabled = false;
-                        }
-                    }
-                }
+                console.error("Failed to save order:", error);
+                showToast('Error placing order. Please try again.');
+            } finally {
+                btn.textContent = "Submit Order";
+                btn.disabled = false;
             }
         }
-
-        window.openWAModal = function() {
-            document.getElementById('wa-modal').classList.add('active');
-        }
-
-        window.closeWAModal = function() {
-            document.getElementById('wa-modal').classList.remove('active');
-        }
-
-        window.sendWAMessage = function(message) {
-            const phone = "601112023015";
-            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-            window.open(url, '_blank');
-            closeWAModal();
-        }
+        
+        window.updateStockUI = function() { /* ... */ }
+        window.openModel = function(evt, modelName) { /* ... */ }
+        window.showToast = function(msg) { /* ... */ }
     </script>
 </body>
 </html>

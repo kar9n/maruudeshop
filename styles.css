@@ -460,6 +460,89 @@ margin-top: 4rem;
     }
 }
 
+/* ========================================= /
+/ SEARCH BAR (SHOP PAGE)                    /
+/ ========================================= */
+.search-container {
+    margin: 0 auto 2rem;
+    max-width: 600px;
+    position: relative;
+    padding: 0 1rem;
+}
+
+.search-bar {
+    width: 100%;
+    padding: 1rem 1.5rem 1rem 3rem;
+    border: 2px solid var(--border-color);
+    border-radius: 50px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    background: #f9fafb;
+    color: var(--text-dark);
+}
+
+.search-bar:focus {
+    border-color: var(--primary-color);
+    background: var(--white);
+    box-shadow: 0 8px 20px rgba(139, 69, 19, 0.08);
+    transform: scale(1.02);
+}
+
+.search-icon {
+    position: absolute;
+    left: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.search-bar:focus + .search-icon {
+    color: var(--primary-color);
+}
+
+#search-results-container {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+/* ========================================= /
+/ SUCCESS ANIMATION & ADMIN MODAL           /
+/ ========================================= */
+.success-checkmark {
+    font-size: 4rem;
+    color: #10b981;
+    margin-bottom: 1rem;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+}
+
+.admin-order-summary {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.admin-order-summary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+    border-color: var(--primary-color);
+}
+
 @media (max-width: 600px) {
     .product-grid {
         grid-template-columns: repeat(2, 1fr); 

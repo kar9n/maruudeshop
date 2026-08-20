@@ -127,6 +127,21 @@
         <span style="position: absolute; top: 20px; right: 30px; color: white; font-size: 2.5rem; font-weight: bold; cursor: pointer;">&times;</span>
         <img id="fullscreen-img" src="" style="max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
     </div>
+    
+    <div class="modal-overlay" id="admin-order-modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Order Details</h3>
+                <button class="close-btn" onclick="closeAdminOrderModal()">&times;</button>
+            </div>
+            <div id="admin-order-modal-content">
+                <!-- Data injected via JS -->
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button class="btn-full" id="confirm-order-btn" style="background-color: #10b981;">Mark Completed</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Firebase SDK Scripts & Admin Logic -->
     <script type="module">
@@ -230,6 +245,8 @@
         }
 
         // Load Customer Orders from Firebase
+        window.adminOrdersMap = {}; // Store orders globally for the modal
+
         async function loadCustomerOrders() {
             const listEl = document.getElementById('admin-order-list');
             listEl.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Loading orders...</p>';
@@ -237,6 +254,7 @@
             try {
                 const querySnapshot = await getDocs(collection(db, "orders"));
                 listEl.innerHTML = '';
+                window.adminOrdersMap = {};
 
                 if (querySnapshot.empty) {
                     listEl.innerHTML = '<p style="text-align: center; color: var(--text-muted);">No customer orders yet.</p>';
@@ -246,58 +264,80 @@
                 querySnapshot.forEach((docSnap) => {
                     const orderId = docSnap.id;
                     const order = docSnap.data();
-                    
-                    let itemsHtml = '';
-                    if (order.items && Array.isArray(order.items)) {
-                        order.items.forEach(item => {
-                            const productData = window.adminProductsData[item.productId];
-                            const itemImg = productData ? productData.image : '';
+                    window.adminOrdersMap[orderId] = order;
 
-                            itemsHtml += `<div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6;">
-                                ${itemImg 
-                                    ? `<img src="${itemImg}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px; cursor: zoom-in; border: 1px solid var(--border-color);" onclick="openFullscreenImage('${itemImg}')" title="Click to enlarge">` 
-                                    : `<div style="width: 50px; height: 50px; background: #e5e7eb; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: #888;">No Img</div>`
-                                }
-                                <div style="flex: 1;">
-                                    <span style="display: block; font-size: 0.9rem; font-weight: 600;">${item.name}</span>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Qty: ${item.qty}</span>
-                                </div>
-                                <span style="font-weight: 600;">RM${(item.price * item.qty).toFixed(2)}</span>
-                            </div>`;
-                        });
-                    }
+                    const dateStr = order.createdAt ? order.createdAt.toDate().toLocaleString() : 'Just now';
 
                     listEl.innerHTML += `
-                        <div style="background: var(--white); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
-                            <div style="flex: 1; min-width: 250px;">
-                                <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--primary-color);">${order.buyerName}</h4>
-                                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;"><strong>Pickup Location:</strong> ${order.pickupLocation}</p>
-                                <div style="background: #f9fafb; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 1rem;">
-                                    <p style="font-size: 0.8rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.25rem;">Ordered Items:</p>
-                                    ${itemsHtml}
-                                </div>
-                                <p style="font-size: 1.1rem; font-weight: 800; color: var(--text-dark);">Total: RM${parseFloat(order.totalAmount).toFixed(2)}</p>
+                        <div class="admin-order-summary" onclick="openAdminOrderModal('${orderId}')">
+                            <div>
+                                <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--primary-color);">${order.buyerName}</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-muted);">Ordered ${order.items.length} item(s) • ${dateStr}</p>
                             </div>
-                            <div style="display: flex; align-items: flex-end;">
-                                <button onclick="completeOrder('${orderId}')" style="background: #ef4444; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background 0.2s;">Complete / Delete Order</button>
+                            <div style="text-align: right;">
+                                <p style="font-size: 1.1rem; font-weight: 800; color: var(--text-dark);">RM${parseFloat(order.totalAmount).toFixed(2)}</p>
+                                <span style="font-size: 0.8rem; color: #3b82f6; font-weight: 600;">View Details &rarr;</span>
                             </div>
                         </div>
                     `;
                 });
             } catch (error) {
                 console.error("Error loading orders:", error);
-                listEl.innerHTML = '<p style="text-align: center; color: #ef4444;">Failed to load orders. Please refresh the page.</p>';
+                listEl.innerHTML = '<p style="text-align: center; color: #ef4444;">Failed to load orders.</p>';
             }
         }
 
+        window.openAdminOrderModal = function(orderId) {
+            const order = window.adminOrdersMap[orderId];
+            const content = document.getElementById('admin-order-modal-content');
+            
+            let itemsHtml = '';
+            order.items.forEach(item => {
+                const productData = window.adminProductsData[item.productId];
+                const itemImg = productData ? productData.image : '';
+
+                itemsHtml += `
+                    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6;">
+                        ${itemImg ? `<img src="${itemImg}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);">` : ''}
+                        <div style="flex: 1;">
+                            <span style="display: block; font-size: 0.9rem; font-weight: 600;">${item.name}</span>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">Qty: ${item.qty}</span>
+                        </div>
+                        <span style="font-weight: 600;">RM${(item.price * item.qty).toFixed(2)}</span>
+                    </div>`;
+            });
+
+            content.innerHTML = `
+                <div style="background: #f9fafb; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border-color);">
+                    <p style="font-size: 0.85rem; margin-bottom: 0.25rem;"><strong>Customer:</strong> ${order.buyerName}</p>
+                    <p style="font-size: 0.85rem; margin-bottom: 0.25rem;"><strong>Phone (WA):</strong> <a href="https://wa.me/${order.buyerPhone}" target="_blank" style="color: #25D366; font-weight: bold;">${order.buyerPhone}</a></p>
+                    <p style="font-size: 0.85rem; margin-bottom: 0.25rem;"><strong>Pickup:</strong> ${order.pickupLocation}</p>
+                </div>
+                <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-dark);">Items Ordered:</h4>
+                <div style="max-height: 200px; overflow-y: auto; margin-bottom: 1rem;">
+                    ${itemsHtml}
+                </div>
+                <h3 style="text-align: right; color: var(--primary-color);">Total: RM${parseFloat(order.totalAmount).toFixed(2)}</h3>
+            `;
+
+            const btn = document.getElementById('confirm-order-btn');
+            btn.onclick = () => completeOrder(orderId);
+
+            document.getElementById('admin-order-modal').classList.add('active');
+        }
+
+        window.closeAdminOrderModal = function() {
+            document.getElementById('admin-order-modal').classList.remove('active');
+        }
+
         window.completeOrder = async function(orderId) {
-            if (confirm("Are you sure you want to mark this order as completed and remove it from the list?")) {
+            if (confirm("Have you verified the DuitNow payment? This will clear the order from the list.")) {
                 try {
                     await deleteDoc(doc(db, "orders", orderId));
+                    closeAdminOrderModal();
                     loadCustomerOrders();
                 } catch (error) {
-                    console.error("Error deleting order:", error);
-                    alert("Failed to delete order.");
+                    alert("Failed to update order.");
                 }
             }
         }
