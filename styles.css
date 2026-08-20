@@ -464,40 +464,44 @@ margin-top: 4rem;
 / SEARCH BAR (SHOP PAGE)                    /
 / ========================================= */
 .search-container {
-    margin: 0 auto 2rem;
-    max-width: 600px;
+    margin: 0 auto 3rem;
+    max-width: 700px;
     position: relative;
     padding: 0 1rem;
 }
 
 .search-bar {
     width: 100%;
-    padding: 1rem 1.5rem 1rem 3rem;
+    padding: 1rem 1.5rem 1rem 3.5rem;
     border: 2px solid var(--border-color);
     border-radius: 50px;
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-family: inherit;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     outline: none;
-    background: #f9fafb;
+    background: var(--white);
     color: var(--text-dark);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    -webkit-appearance: none; /* Strips default "bone stock" browser styles */
+    -moz-appearance: none;
+    appearance: none;
 }
 
 .search-bar:focus {
     border-color: var(--primary-color);
-    background: var(--white);
-    box-shadow: 0 8px 20px rgba(139, 69, 19, 0.08);
-    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(139, 69, 19, 0.12);
+    transform: translateY(-2px);
 }
 
 .search-icon {
     position: absolute;
-    left: 2rem;
+    left: 2.2rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--text-muted);
-    font-size: 1.2rem;
+    color: #9ca3af;
+    font-size: 1.25rem;
     transition: color 0.3s ease;
+    pointer-events: none; /* Ensures clicking the icon still clicks the search bar */
 }
 
 .search-bar:focus + .search-icon {

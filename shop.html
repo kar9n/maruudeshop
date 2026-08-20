@@ -198,7 +198,7 @@
 
         window.stockState = {};
         window.cart = {};
-        window.allProducts = []; // Stores all products for searching
+        window.allProducts = []; 
 
         window.addEventListener('DOMContentLoaded', async () => {
             const querySnapshot = await getDocs(collection(db, "products"));
@@ -213,7 +213,7 @@
                 
                 const grid = document.getElementById(`grid-${data.category}`);
                 if (grid) {
-                    grid.innerHTML += createProductCard(data);
+                    grid.innerHTML += window.createProductCard(data);
                 }
             });
         });
@@ -235,25 +235,24 @@
             searchView.style.display = 'block';
             searchGrid.innerHTML = '';
 
-            // Scoring Algorithm for Smart Sorting
             const results = window.allProducts.map(product => {
                 let score = 0;
                 const name = product.name.toLowerCase();
                 
-                if (name === query) score = 100; // Exact match priority
-                else if (name.startsWith(query)) score = 80; // Starts with priority
-                else if (name.includes(query)) score = 50 + (query.length / name.length); // Partial match
+                if (name === query) score = 100; 
+                else if (name.startsWith(query)) score = 80; 
+                else if (name.includes(query)) score = 50 + (query.length / name.length); 
                 
                 return { product, score };
             }).filter(item => item.score > 0);
 
-            results.sort((a, b) => b.score - a.score); // Sort highest score first
+            results.sort((a, b) => b.score - a.score); 
 
             if (results.length === 0) {
                 searchGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 2rem;">No cases found for that model.</p>';
             } else {
                 results.forEach(item => {
-                    searchGrid.innerHTML += createProductCard(item.product);
+                    searchGrid.innerHTML += window.createProductCard(item.product);
                 });
             }
         }
@@ -280,17 +279,104 @@
             `;
         }
 
-        // Cart functions remain identical to your current implementation
-        // [Omitted addToCart, removeFromCart, updateCartCount, openCart, closeCart for brevity]
-        window.addToCart = function(id, name, price) { /* ... */ }
-        window.openCart = function() { /* ... */ }
-        window.closeCart = function() { /* ... */ }
+        // Restored Tab Logic
+        window.openModel = function(evt, modelName) {
+            var tabcontent = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            var tabbuttons = document.getElementsByClassName("tab-button");
+            for (var i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+            }
+            document.getElementById(modelName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // Restored Toast Notification
+        window.showToast = function(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Restored Cart Logic
+        window.addToCart = function(id, name, price) {
+            const currentQty = window.cart[id] ? window.cart[id].qty : 0;
+            if (currentQty >= window.stockState[id]) {
+                window.showToast('Not enough stock available!');
+                return;
+            }
+            
+            if (!window.cart[id]) {
+                window.cart[id] = { name, price, qty: 1 };
+            } else {
+                window.cart[id].qty++;
+            }
+            window.updateCartCount();
+            window.showToast(`${name} added to cart!`);
+        }
+
+        window.removeFromCart = function(id) {
+            if (window.cart[id]) {
+                const name = window.cart[id].name;
+                delete window.cart[id];
+                window.updateCartCount();
+                window.openCart();
+                window.showToast(`Removed ${name} from cart`);
+            }
+        }
+
+        window.updateCartCount = function() {
+            const count = Object.values(window.cart).reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cart-count').textContent = count;
+        }
+
+        window.openCart = function() {
+            const container = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total-price');
+            const btnCheckout = document.getElementById('btn-checkout');
+            
+            container.innerHTML = '';
+            let total = 0;
+            const keys = Object.keys(window.cart);
+            
+            if (keys.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Your cart is empty.</p>';
+                btnCheckout.disabled = true;
+            } else {
+                btnCheckout.disabled = false;
+                keys.forEach(id => {
+                    const item = window.cart[id];
+                    total += item.price * item.qty;
+                    container.innerHTML += `
+                        <div class="cart-item">
+                            <div class="cart-item-info">
+                                <h4>${item.name}</h4>
+                                <span style="font-size:0.875rem; color:var(--text-muted);">Qty: ${item.qty}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div class="cart-item-price">RM${(item.price * item.qty).toFixed(2)}</div>
+                                <button onclick="removeFromCart('${id}')" style="background:none; border:none; color:#ef4444; font-size:1.25rem; font-weight:bold; cursor:pointer;" title="Remove">&times;</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            totalEl.textContent = `RM${total.toFixed(2)}`;
+            document.getElementById('cart-modal').classList.add('active');
+        }
+
+        window.closeCart = function() {
+            document.getElementById('cart-modal').classList.remove('active');
+        }
 
         window.proceedToCheckout = function() {
             let total = 0;
             for (const item of Object.values(window.cart)) { total += item.price * item.qty; }
             document.getElementById('checkout-total-display').textContent = `RM${total.toFixed(2)}`;
-            closeCart();
+            window.closeCart();
             document.getElementById('checkout-modal').classList.add('active');
         }
 
@@ -302,7 +388,6 @@
             document.getElementById('success-modal').classList.remove('active');
         }
 
-        // Updated Checkout without WhatsApp
         window.submitCheckout = async function() {
             const name = document.getElementById('buyer-name').value.trim();
             const phone = document.getElementById('buyer-phone').value.trim();
@@ -310,7 +395,7 @@
             const btn = document.getElementById('submit-order-btn');
             
             if (!name || !phone || !location) {
-                showToast('Please fill in all details.');
+                window.showToast('Please fill in all details.');
                 return;
             }
 
@@ -348,29 +433,54 @@
 
                 // Clear cart & UI
                 window.cart = {};
-                updateCartCount();
-                updateStockUI();
-                closeCheckout();
+                window.updateCartCount();
+                window.updateStockUI();
+                window.closeCheckout();
                 
                 document.getElementById('buyer-name').value = '';
                 document.getElementById('buyer-phone').value = '';
                 document.getElementById('pickup-location').value = '';
                 
-                // Show Success Modal instead of WhatsApp
+                // Show Success Modal
                 document.getElementById('success-modal').classList.add('active');
 
             } catch (error) {
                 console.error("Failed to save order:", error);
-                showToast('Error placing order. Please try again.');
+                window.showToast('Error placing order. Please try again.');
             } finally {
                 btn.textContent = "Submit Order";
                 btn.disabled = false;
             }
         }
         
-        window.updateStockUI = function() { /* ... */ }
-        window.openModel = function(evt, modelName) { /* ... */ }
-        window.showToast = function(msg) { /* ... */ }
+        window.updateStockUI = function() {
+            for (const [id, stock] of Object.entries(window.stockState)) {
+                const card = document.getElementById(`product-${id}`);
+                const stockText = document.getElementById(`stock-text-${id}`);
+                
+                if (stockText) {
+                    stockText.textContent = stock > 0 ? `Stock: ${stock} available` : 'Stock: Sold Out';
+                    stockText.style.color = stock > 0 ? 'var(--primary-color)' : '#ef4444';
+                }
+                
+                if (card) {
+                    const btn = card.querySelector('.add-to-cart');
+                    if (stock <= 0) {
+                        card.classList.add('sold-out');
+                        if (btn) {
+                            btn.textContent = 'SOLD OUT';
+                            btn.disabled = true;
+                        }
+                    } else {
+                        card.classList.remove('sold-out');
+                        if (btn) {
+                            btn.textContent = 'Add';
+                            btn.disabled = false;
+                        }
+                    }
+                }
+            }
+        }
     </script>
 </body>
 </html>
