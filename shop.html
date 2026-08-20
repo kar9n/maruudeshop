@@ -200,32 +200,43 @@
         window.cart = {};
         window.allProducts = []; 
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            const querySnapshot = await getDocs(collection(db, "products"));
-            
-            querySnapshot.forEach((docSnap) => {
-                const id = docSnap.id;
-                const data = docSnap.data();
-                data.id = id; 
+        // Execute fetch immediately instead of waiting for a delayed DOM event
+        async function loadShopProducts() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "products"));
                 
-                window.stockState[id] = data.stock;
-                window.allProducts.push(data);
-                
-                const grid = document.getElementById(`grid-${data.category}`);
-                if (grid) {
-                    grid.innerHTML += window.createProductCard(data);
-                }
-            });
-        });
+                querySnapshot.forEach((docSnap) => {
+                    const id = docSnap.id;
+                    const data = docSnap.data();
+                    data.id = id; 
+                    
+                    window.stockState[id] = data.stock;
+                    window.allProducts.push(data);
+                    
+                    const grid = document.getElementById(`grid-${data.category}`);
+                    if (grid) {
+                        grid.innerHTML += window.createProductCard(data);
+                    }
+                });
+            } catch (error) {
+                console.error("Failed to fetch products:", error);
+            }
+        }
+        
+        // Initialize shop immediately
+        loadShopProducts();
 
         // Smart Search Function
         window.handleSearch = function(event) {
-            const query = event.target.value.toLowerCase().replace('ip', 'iphone ');
+            // Converts "ip15" or "ip 15" into "iphone 15" for smarter matching
+            let query = event.target.value.toLowerCase().trim();
+            query = query.replace(/^ip\b/g, 'iphone').replace(/^ip/g, 'iphone '); 
+            
             const standardView = document.getElementById('standard-shop-view');
             const searchView = document.getElementById('search-results-container');
             const searchGrid = document.getElementById('grid-search-results');
             
-            if (query.trim() === '') {
+            if (query === '') {
                 standardView.style.display = 'block';
                 searchView.style.display = 'none';
                 return;
@@ -238,18 +249,19 @@
             const results = window.allProducts.map(product => {
                 let score = 0;
                 const name = product.name.toLowerCase();
+                const desc = product.description.toLowerCase();
                 
-                if (name === query) score = 100; 
-                else if (name.startsWith(query)) score = 80; 
-                else if (name.includes(query)) score = 50 + (query.length / name.length); 
+                if (name === query) score += 100; // Exact match
+                if (name.includes(query)) score += 50; // Partial match in name
+                if (desc.includes(query)) score += 10; // Mentioned in description
                 
                 return { product, score };
             }).filter(item => item.score > 0);
 
-            results.sort((a, b) => b.score - a.score); 
+            results.sort((a, b) => b.score - a.score); // Highest relevance first
 
             if (results.length === 0) {
-                searchGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 2rem;">No cases found for that model.</p>';
+                searchGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 2rem; font-size: 1.1rem;">No cases found matching your search.</p>';
             } else {
                 results.forEach(item => {
                     searchGrid.innerHTML += window.createProductCard(item.product);
@@ -259,6 +271,9 @@
 
         window.createProductCard = function(data) {
             const isSoldOut = data.stock <= 0;
+            // Escaping quotes in names so it doesn't break the HTML button 
+            const safeName = data.name.replace(/'/g, "\\'"); 
+            
             return `
                 <div class="product-card ${isSoldOut ? 'sold-out' : ''}" id="product-${data.id}">
                     <img src="${data.image}" alt="${data.name}" class="product-image" loading="lazy">
@@ -270,7 +285,7 @@
                         </p>
                         <div class="product-footer">
                             <span class="product-price">RM${parseFloat(data.price).toFixed(2)}</span>
-                            <button class="add-to-cart" onclick="addToCart('${data.id}', '${data.name}', ${data.price})" ${isSoldOut ? 'disabled' : ''}>
+                            <button class="add-to-cart" onclick="addToCart('${data.id}', '${safeName}', ${data.price})" ${isSoldOut ? 'disabled' : ''}>
                                 ${isSoldOut ? 'SOLD OUT' : 'Add'}
                             </button>
                         </div>
@@ -279,7 +294,6 @@
             `;
         }
 
-        // Restored Tab Logic
         window.openModel = function(evt, modelName) {
             var tabcontent = document.getElementsByClassName("tab-content");
             for (var i = 0; i < tabcontent.length; i++) {
@@ -293,7 +307,6 @@
             evt.currentTarget.className += " active";
         }
 
-        // Restored Toast Notification
         window.showToast = function(msg) {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
@@ -301,7 +314,6 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Restored Cart Logic
         window.addToCart = function(id, name, price) {
             const currentQty = window.cart[id] ? window.cart[id].qty : 0;
             if (currentQty >= window.stockState[id]) {
@@ -480,6 +492,22 @@
                     }
                 }
             }
+        }
+
+        // Restored WhatsApp Modal Functions
+        window.openWAModal = function() {
+            document.getElementById('wa-modal').classList.add('active');
+        }
+
+        window.closeWAModal = function() {
+            document.getElementById('wa-modal').classList.remove('active');
+        }
+
+        window.sendWAMessage = function(message) {
+            const phone = "601112023015";
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+            window.closeWAModal();
         }
     </script>
 </body>
