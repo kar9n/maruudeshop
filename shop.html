@@ -51,6 +51,7 @@
         <div class="search-container">
             <input type="text" id="product-search" class="search-bar" placeholder="Search models (e.g. iPhone 15, ip14 pro)..." oninput="handleSearch(event)">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <button type="button" id="search-clear" class="search-clear-btn" onclick="clearSearch()"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
         <div id="standard-shop-view">
@@ -163,7 +164,6 @@
 
     <!-- WhatsApp Selection Modal -->
     <div class="modal-overlay" id="wa-modal">
-        <!-- (Same WA modal code as before) -->
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">How can we help?</h3>
@@ -178,6 +178,14 @@
     </div>
 
     <div class="toast" id="toast">Added to cart!</div>
+
+    <!-- EmailJS SDK for Push Notifications -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("l_kmMne0Re__ZndcO"); 
+        })();
+    </script>
 
     <!-- Firebase SDK & Script Logic -->
     <script type="module">
@@ -200,7 +208,6 @@
         window.cart = {};
         window.allProducts = []; 
 
-        // Execute fetch immediately instead of waiting for a delayed DOM event
         async function loadShopProducts() {
             try {
                 const querySnapshot = await getDocs(collection(db, "products"));
@@ -223,24 +230,27 @@
             }
         }
         
-        // Initialize shop immediately
         loadShopProducts();
 
-        // Smart Search Function
         window.handleSearch = function(event) {
-            // Converts "ip15" or "ip 15" into "iphone 15" for smarter matching
-            let query = event.target.value.toLowerCase().trim();
-            query = query.replace(/^ip\b/g, 'iphone').replace(/^ip/g, 'iphone '); 
-            
+            let rawQuery = event.target.value.toLowerCase().trim();
+            const clearBtn = document.getElementById('search-clear');
             const standardView = document.getElementById('standard-shop-view');
             const searchView = document.getElementById('search-results-container');
             const searchGrid = document.getElementById('grid-search-results');
             
-            if (query === '') {
+            if (rawQuery.length > 0) {
+                clearBtn.style.display = 'flex';
+            } else {
+                clearBtn.style.display = 'none';
                 standardView.style.display = 'block';
                 searchView.style.display = 'none';
                 return;
             }
+
+            let query = rawQuery.replace(/^ip\b/g, 'iphone').replace(/^ip(\d)/g, 'iphone$1');
+            const strippedQuery = query.replace(/\s+/g, ''); 
+            const searchTerms = query.split(/\s+/); 
 
             standardView.style.display = 'none';
             searchView.style.display = 'block';
@@ -250,15 +260,24 @@
                 let score = 0;
                 const name = product.name.toLowerCase();
                 const desc = product.description.toLowerCase();
-                
-                if (name === query) score += 100; // Exact match
-                if (name.includes(query)) score += 50; // Partial match in name
-                if (desc.includes(query)) score += 10; // Mentioned in description
-                
+                const strippedName = name.replace(/\s+/g, '');
+
+                if (strippedName.includes(strippedQuery)) score += 100;
+
+                let termsMatched = 0;
+                searchTerms.forEach(term => {
+                    if (name.includes(term)) termsMatched += 1;
+                    else if (desc.includes(term)) termsMatched += 0.5;
+                });
+
+                if (termsMatched >= searchTerms.length && searchTerms.length > 0) {
+                    score += 50;
+                }
+
                 return { product, score };
             }).filter(item => item.score > 0);
 
-            results.sort((a, b) => b.score - a.score); // Highest relevance first
+            results.sort((a, b) => b.score - a.score); 
 
             if (results.length === 0) {
                 searchGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 2rem; font-size: 1.1rem;">No cases found matching your search.</p>';
@@ -269,9 +288,17 @@
             }
         }
 
+        window.clearSearch = function() {
+            const input = document.getElementById('product-search');
+            input.value = '';
+            document.getElementById('search-clear').style.display = 'none';
+            document.getElementById('standard-shop-view').style.display = 'block';
+            document.getElementById('search-results-container').style.display = 'none';
+            input.focus();
+        }
+
         window.createProductCard = function(data) {
             const isSoldOut = data.stock <= 0;
-            // Escaping quotes in names so it doesn't break the HTML button 
             const safeName = data.name.replace(/'/g, "\\'"); 
             
             return `
@@ -417,6 +444,17 @@
             let total = 0;
             let orderItemsSummary = [];
 
+            // 1. Double check real-time stock before locking
+            for (const [id, item] of Object.entries(window.cart)) {
+                if (item.qty > window.stockState[id]) {
+                    window.showToast(`Sorry, "${item.name}" just ran out of stock!`);
+                    btn.textContent = "Submit Order";
+                    btn.disabled = false;
+                    return;
+                }
+            }
+
+            // 2. Reserve/Deduct stock immediately to prevent overselling
             for (const [id, item] of Object.entries(window.cart)) {
                 total += item.price * item.qty;
                 orderItemsSummary.push({
@@ -429,9 +467,10 @@
                 window.stockState[id] -= item.qty; 
                 try {
                     await updateDoc(doc(db, "products", id), { stock: Math.max(0, window.stockState[id]) });
-                } catch (error) { console.error("Failed to update stock"); }
+                } catch (error) { console.error("Failed to reserve stock"); }
             }
 
+            // 3. Save order to Firebase & trigger EmailJS notification
             try {
                 await addDoc(collection(db, "orders"), {
                     buyerName: name,
@@ -439,11 +478,24 @@
                     pickupLocation: location,
                     items: orderItemsSummary,
                     totalAmount: total,
-                    status: "Pending Verification",
+                    status: "Pending Payment Verification",
                     createdAt: serverTimestamp()
                 });
 
-                // Clear cart & UI
+                const templateParams = {
+                    customer_name: name,
+                    customer_phone: phone,
+                    order_total: `RM${total.toFixed(2)}`,
+                    pickup_location: location
+                };
+                
+                emailjs.send('service_maruudeshop', 'template_orderAlert', templateParams)
+                    .then(function(response) {
+                        console.log('Push notification sent!', response.status, response.text);
+                    }, function(error) {
+                        console.log('Push notification failed...', error);
+                    });
+
                 window.cart = {};
                 window.updateCartCount();
                 window.updateStockUI();
@@ -453,7 +505,6 @@
                 document.getElementById('buyer-phone').value = '';
                 document.getElementById('pickup-location').value = '';
                 
-                // Show Success Modal
                 document.getElementById('success-modal').classList.add('active');
 
             } catch (error) {
@@ -494,7 +545,6 @@
             }
         }
 
-        // Restored WhatsApp Modal Functions
         window.openWAModal = function() {
             document.getElementById('wa-modal').classList.add('active');
         }

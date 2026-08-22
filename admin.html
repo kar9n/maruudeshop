@@ -138,7 +138,8 @@
                 <!-- Data injected via JS -->
             </div>
             <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                <button class="btn-full" id="confirm-order-btn" style="background-color: #10b981;">Mark Completed</button>
+                <button class="btn-full" id="confirm-order-btn" style="background-color: #10b981; flex: 1;">Confirm & Complete</button>
+                <button class="btn-full" id="cancel-order-btn" style="background-color: #ef4444; flex: 1;">Cancel & Restock</button>
             </div>
         </div>
     </div>
@@ -320,26 +321,46 @@
                 <h3 style="text-align: right; color: var(--primary-color);">Total: RM${parseFloat(order.totalAmount).toFixed(2)}</h3>
             `;
 
-            const btn = document.getElementById('confirm-order-btn');
-            btn.onclick = () => completeOrder(orderId);
+            // Wire up the Confirm button (just archives the order since stock was already reserved)
+            document.getElementById('confirm-order-btn').onclick = async () => {
+                if (confirm(`Confirm payment received from ${order.buyerName}?`)) {
+                    try {
+                        await deleteDoc(doc(db, "orders", orderId));
+                        closeAdminOrderModal();
+                        loadCustomerOrders();
+                        alert("Order completed successfully!");
+                    } catch (error) {
+                        alert("Failed to confirm order.");
+                    }
+                }
+            };
+
+            // Wire up the Cancel button (puts the stock back into inventory)
+            document.getElementById('cancel-order-btn').onclick = async () => {
+                if (confirm(`Cancel order and return items back to active stock?`)) {
+                    try {
+                        for (const item of order.items) {
+                            const currentStock = window.adminProductsData[item.productId] ? window.adminProductsData[item.productId].stock : 0;
+                            const restoredStock = currentStock + item.qty;
+                            
+                            await updateDoc(doc(db, "products", item.productId), { stock: restoredStock });
+                        }
+                        await deleteDoc(doc(db, "orders", orderId));
+                        closeAdminOrderModal();
+                        loadAdminProducts();
+                        loadCustomerOrders();
+                        alert("Order cancelled and stock successfully restored!");
+                    } catch (err) {
+                        alert("Failed to restock items.");
+                    }
+                }
+            };
 
             document.getElementById('admin-order-modal').classList.add('active');
         }
 
         window.closeAdminOrderModal = function() {
             document.getElementById('admin-order-modal').classList.remove('active');
-        }
-
-        window.completeOrder = async function(orderId) {
-            if (confirm("Have you verified the DuitNow payment? This will clear the order from the list.")) {
-                try {
-                    await deleteDoc(doc(db, "orders", orderId));
-                    closeAdminOrderModal();
-                    loadCustomerOrders();
-                } catch (error) {
-                    alert("Failed to update order.");
-                }
-            }
         }
 
         // Image Compressor Function
